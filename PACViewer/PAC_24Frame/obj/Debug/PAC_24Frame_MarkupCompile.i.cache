@@ -4,17 +4,17 @@
 exe
 C#
 .cs
-D:\PhysiComTech\2020_PlasmaAirCleaner\SourceCode\PACViewer\PAC_24Frame\obj\Debug\
+D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_24Frame\obj\Debug\
 PAC_24Frame
 none
 false
 DEBUG;TRACE
-D:\PhysiComTech\2020_PlasmaAirCleaner\SourceCode\PACViewer\PAC_24Frame\App.xaml
-51292468950
+D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_24Frame\App.xaml
+5778237499
 
-22-2067563893
-17-1922765573
-Display\Displayer.xaml;Environment\EnvironmentBar.xaml;MainWindow.xaml;ProgressMessage.xaml;RegisterWindow.xaml;
+22-1333441456
+17936011059
+Display\Displayer.xaml;Environment\EnvironmentBar.xaml;MainWindow.xaml;ProgressMessage.xaml;RegisterKeyDialog.xaml;
 
 False
 

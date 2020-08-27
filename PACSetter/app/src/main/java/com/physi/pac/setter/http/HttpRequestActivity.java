@@ -24,10 +24,10 @@ public class HttpRequestActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "서버와 통신이 불안정합니다.", Toast.LENGTH_SHORT).show();
                 }else{
                     JSONObject resObj = new JSONObject(responseData);
-                    if(resObj.getString(HttpPacket.PARAMS_RES_CODE).equals(REQ_SUCCESS)){
+                    if(resObj.getString(HttpPacket.PARAMS_RESULT).equals(REQ_SUCCESS)){
                         onHttpResponse(url, resObj);
                     }else {
-                        showErrorToast(resObj.getString(HttpPacket.PARAMS_RES_CODE));
+                        showErrorToast(resObj.getString(HttpPacket.PARAMS_RESULT));
                         LoadingDialog.dismiss();
                     }
                 }

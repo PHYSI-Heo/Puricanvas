@@ -1,9 +1,5 @@
 package com.physi.pac.setter;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.ContentValues;
 import android.os.Bundle;
 import android.view.View;
@@ -14,18 +10,16 @@ import android.widget.Toast;
 import com.physi.pac.setter.http.HttpPacket;
 import com.physi.pac.setter.http.HttpRequestActivity;
 import com.physi.pac.setter.utils.DBHelper;
+import com.physi.pac.setter.utils.LoadingDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Objects;
 
 public class RegisterActivity extends HttpRequestActivity implements View.OnClickListener {
 
     private static final String TAG = RegisterActivity.class.getSimpleName();
 
     private EditText etDeviceID, etDeviceName;
-    private Button btnRegister;
 
     private DBHelper dbHelper;
 
@@ -35,25 +29,47 @@ public class RegisterActivity extends HttpRequestActivity implements View.OnClic
         setContentView(R.layout.activity_register);
 
         init();
+
+        etDeviceID.setText("AAAAAA");
+        etDeviceName.setText("AA");
     }
 
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_register){
-            checkDeviceID();
+            checkExistSerialNumber();
+        }else{
+            registerSerialNumber();
         }
     }
 
     @Override
     protected void onHttpResponse(String url, JSONObject resObj) {
         super.onHttpResponse(url, resObj);
-        if(url.equals(HttpPacket.EXIST_ID_URL))
+        if(url.equals(HttpPacket.EXIST_ID_URL)) {
+            LoadingDialog.dismiss();
             registerDevice(resObj);
+        }
     }
 
-    private void checkDeviceID(){
-        if(etDeviceID.getText().length() == 0 || etDeviceName.getText().length() == 0)
+    private void registerSerialNumber(){
+        if(etDeviceID.length() == 0 || etDeviceName.length() == 0)
             return;
+        JSONObject paramsObj = new JSONObject();
+        try {
+            paramsObj.put(HttpPacket.PARAMS_DEVICE_ID, etDeviceID.getText().toString());
+            requestAPI(HttpPacket.REGISTER_ID_URL, paramsObj);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void checkExistSerialNumber(){
+        if(etDeviceID.length() == 0 || etDeviceName.length() == 0)
+            return;
+
+        LoadingDialog.show(RegisterActivity.this, "Register Device.");
+
         JSONObject paramsObj = new JSONObject();
         try {
             paramsObj.put(HttpPacket.PARAMS_DEVICE_ID, etDeviceID.getText().toString());
@@ -70,24 +86,26 @@ public class RegisterActivity extends HttpRequestActivity implements View.OnClic
                 params.put(DBHelper.COL_DEVICE_ID, etDeviceID.getText().toString());
                 params.put(DBHelper.COL_NAME, etDeviceName.getText().toString());
                 boolean result = dbHelper.insertData(params);
-                Toast.makeText(getApplicationContext(), "REGISTER RESULT : " + result, Toast.LENGTH_SHORT).show();
-                if(result)
-                    finish();
+                Toast.makeText(getApplicationContext(),
+                        result ? "디바이스가 등록되었습니다." : "이미 등록된 디바이스 입니다.",
+                        Toast.LENGTH_SHORT).show();
+                finish();
             }else{
-                Toast.makeText(getApplicationContext(), "등록되지 않은 시리얼번호 입니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "시리얼번호를 확인하세요.", Toast.LENGTH_SHORT).show();
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
-    private void init() {      
+    private void init() {
         etDeviceID = findViewById(R.id.et_device_id);
         etDeviceName = findViewById(R.id.et_device_name);
 
-        btnRegister = findViewById(R.id.btn_register);
+        Button btnRegister = findViewById(R.id.btn_register);
         btnRegister.setOnClickListener(this);
+        Button btnCreateID = findViewById(R.id.btn_create_id);
+        btnCreateID.setOnClickListener(this);
 
         dbHelper = new DBHelper(getApplicationContext());
     }

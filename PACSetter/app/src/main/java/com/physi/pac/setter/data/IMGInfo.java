@@ -2,36 +2,50 @@ package com.physi.pac.setter.data;
 
 public class IMGInfo {
 
-    private String thumbnailPath, filePath;
-    private String fileName;
+    private String no, fileName, usfState;
+    private String localFilePath;
 
     public IMGInfo(){
     }
 
-    public IMGInfo(String thumbnailPath, String filePath){
-        this.filePath = filePath;
-        this.thumbnailPath = thumbnailPath;
-    }
-
-    public void setThumbnailPath(String thumbnailPath, String fileName){
-        this.thumbnailPath = thumbnailPath;
+    public IMGInfo(String no, String fileName, String usfState){
+        this.no = no;
         this.fileName = fileName;
+        this.usfState = usfState;
     }
 
-    public void setFilePath(String filePath){
-        this.filePath = filePath;
-        this.fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+    public IMGInfo(String no, String fileName, String usfState, String localFilePath){
+        this.no = no;
+        this.fileName = fileName;
+        this.usfState = usfState;
+        this.localFilePath = localFilePath;
     }
 
-    public String getThumbnailPath(){
-        return thumbnailPath;
-    }
-
-    public String getFilePath(){
-        return filePath;
+    public String getLocalFilePath() {
+        return localFilePath;
     }
 
     public String getFileName() {
         return fileName;
+    }
+
+    public String getNo() {
+        return no;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void setNo(String no) {
+        this.no = no;
+    }
+
+    public String getUsfState() {
+        return usfState;
+    }
+
+    public void setUsfState(String usfState) {
+        this.usfState = usfState;
     }
 }

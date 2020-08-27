@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
 }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.listen(app.get('port'), function() {
@@ -22,3 +23,6 @@ app.listen(app.get('port'), function() {
 
 var deviceRouter = require('./routes/device');
 app.use('/device', deviceRouter);
+
+var imgRouter = require('./routes/images');
+app.use('/image', imgRouter);

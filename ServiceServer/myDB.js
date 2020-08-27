@@ -17,6 +17,7 @@ var dbConfig = {
 
 const SQL_CD = "CREATE DATABASE " + DBNAME;
 
+// varbinary & varchar
 const SQL_CT_DEVICE = "CREATE TABLE device ( " +
   "did varchar(20) not null primary key, " +
   "city varchar(20), " +
@@ -28,7 +29,7 @@ const SQL_CT_DEVICE = "CREATE TABLE device ( " +
 const SQL_CT_IMAGEs = "CREATE TABLE img_resource ( " +
   "did varchar(20) not null, " +
   "_order int not null, " +
-  "usf char(1) not null, " +
+  "usf char(1) not null default '0', " +
   "filename varchar(50) not null);"; 
 
 
@@ -36,9 +37,13 @@ let dbPool = mysql.createPool(dbConfig);
 
 module.exports.init = () => {
   initDB().then(async()=>{
-    const db = dbPool.promise();
-    await db.query(SQL_CT_DEVICE);    
-    await db.query(SQL_CT_IMAGEs);    
+    try{
+      const db = dbPool.promise();
+      await db.query(SQL_CT_DEVICE);    
+      await db.query(SQL_CT_IMAGEs);    
+    }catch(err){
+      console.log(err);
+    }   
   });
 }
 
@@ -55,14 +60,15 @@ function initDB() {
 
 module.exports.insert = (table, params) => {
   return new Promise(async(resolve, reject) => {
-    var cnt = 0;
-    var param = params.isArray() ? params[0] : params;
+    var cnt = 0;    
+    var data = JSON.parse(JSON.stringify(params));
+    var param = Array.isArray(data) ? data[0] : data;
     var sql = "INSERT INTO " + table + "(";
     var val = "VALUES (";
     const columns = JSON.parse(JSON.stringify(Object.keys(param)));
     for await (const column of columns) {
       sql += column;
-      val += "'" + params[column] + "'";
+      val += "'" + param[column] + "'";
       if(columns.length -1 != cnt++){
         sql += ", ";
         val += ", ";
@@ -72,9 +78,10 @@ module.exports.insert = (table, params) => {
       }
     }
 
-    if (params.isArray()) {
-      params.shift(); // remove array 0 index.
-      for await(const obj of params){
+    if (Array.isArray(data)) {
+      data.shift(); // remove array 0 index.
+      for await(const obj of data){
+        cnt = 0;
         val += ", (";
         for await (const column of columns) {       
           val += "'" + obj[column] + "'";
@@ -87,6 +94,8 @@ module.exports.insert = (table, params) => {
       }
     }
     sql += val;
+
+    console.log(sql);
     dbPool.query(sql, (err, rows, fields) => {
       if(err)
         reject(err);    
@@ -117,6 +126,8 @@ module.exports.select = (table, params, target, option) => {
       const name = Object.keys(target)[0];
       sql += " WHERE " + name + " = '"  + target[name] + "'";
     }
+
+    console.log(sql);
     dbPool.query(sql, (err, rows, fields) => {
       if(err)
         reject(err);    
@@ -134,6 +145,8 @@ module.exports.delete = (table, target, option) =>{
       const name = Object.keys(target)[0];
       sql += " WHERE " + name + " = '"  + target[name] + "'";
     }
+
+    console.log(sql);
     dbPool.query(sql, (err, rows, fields) => {
       if(err)
         reject(err);    
@@ -160,6 +173,8 @@ module.exports.update = (table, params, target, option) =>{
       const name = Object.keys(target)[0];
       sql += " WHERE " + name + " = '"  + target[name] + "'";
     }
+
+    console.log(sql);
     dbPool.query(sql, (err, rows, fields) => {
       if(err)
         reject(err);    

@@ -89,6 +89,20 @@
             android:text="Register"
             android:textColor="@android:color/white"/>
 
+        <Button
+            android:id="@+id/btn_create_id"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:textSize="14sp"
+            android:background="@drawable/btn_shape"
+            android:shadowColor="#A8A8A8"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="4"
+            android:text="Create ID"
+            android:textColor="@android:color/white"
+            android:visibility="visible"/>
+
     </LinearLayout>
 
 </LinearLayout>

@@ -1,16 +1,14 @@
 package com.physi.pac.setter;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
-import android.graphics.Paint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.physi.pac.setter.data.DeviceInfo;
 import com.physi.pac.setter.list.DeviceAdapter;
@@ -18,28 +16,19 @@ import com.physi.pac.setter.mqtt.MQTTClient;
 import com.physi.pac.setter.utils.DBHelper;
 import com.physi.pac.setter.utils.SystemEnv;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DeviceActivity extends AppCompatActivity implements View.OnClickListener, DeviceAdapter.OnSelectedListener {
 
     private static final String TAG = DeviceActivity.class.getSimpleName();
 
-    private Button btnRegister;
-    private RecyclerView rcvDevice;
     private TextView tvNoItem;
+    private RecyclerView rcvDevice;
 
     private DBHelper dbHelper;
     private DeviceAdapter deviceAdapter;
 
     private List<DeviceInfo> devices;
-    private MQTTClient mqttClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +36,7 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_device);
 
         init();
-
-        mqttClient.connect(getApplicationContext(),
+        MQTTClient.getInstance().connect(getApplicationContext(),
                 SystemEnv.BROKER_IP, SystemEnv.BROKER_PORT);
     }
 
@@ -56,21 +44,15 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
     protected void onStart() {
         super.onStart();
         devices = dbHelper.getDeviceList();
-        if(devices.size() == 0){
-            tvNoItem.setVisibility(View.VISIBLE);
-            rcvDevice.setVisibility(View.GONE);
-        }else{
-            tvNoItem.setVisibility(View.GONE);
-            rcvDevice.setVisibility(View.VISIBLE);
-        }
         deviceAdapter.setItems(devices);
-
+        tvNoItem.setVisibility(devices.size() == 0 ? View.VISIBLE : View.GONE);
+        rcvDevice.setVisibility(devices.size() == 0 ? View.GONE : View.VISIBLE);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mqttClient.disconnect();
+        MQTTClient.getInstance().disconnect();
     }
 
 
@@ -94,7 +76,7 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void init() {
-        btnRegister = findViewById(R.id.btn_register);
+        Button btnRegister = findViewById(R.id.btn_register);
         btnRegister.setOnClickListener(this);
 
         rcvDevice = findViewById(R.id.rcv_devices);
@@ -108,9 +90,7 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
         deviceAdapter.setOnSelectedListener(this);
 
         tvNoItem = findViewById(R.id.tv_no_device);
-
         dbHelper = new DBHelper(getApplicationContext());
-        mqttClient = MQTTClient.getInstance();
     }
 
 }

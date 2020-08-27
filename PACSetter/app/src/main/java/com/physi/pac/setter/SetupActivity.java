@@ -26,6 +26,7 @@ import com.physi.pac.setter.http.HttpPacket;
 import com.physi.pac.setter.http.HttpRequestActivity;
 import com.physi.pac.setter.mqtt.MQTTClient;
 import com.physi.pac.setter.utils.DBHelper;
+import com.physi.pac.setter.utils.LoadingDialog;
 import com.physi.pac.setter.utils.LocationInfo;
 import com.physi.pac.setter.utils.NotifyDialog;
 
@@ -40,16 +41,14 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
 
     private static final String TAG = SetupActivity.class.getSimpleName();
 
-    private Button btnEditName, btnDeleteDevice, btnSetup;
     private EditText etName, etDisplayTime;
-    private Switch swcCCTVEnable;
     private Spinner spnCity, spnProvince;
 
     private DBHelper dbHelper;
     private LocationInfo locationInfo;
 
     private DeviceInfo deviceInfo;
-    private String savedCity, savedProvince;
+    private String savedProvince;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +57,6 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
 
         init();
         getSetupInformation();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        etName.setText(deviceInfo.getName());
     }
 
     @Override
@@ -85,7 +78,7 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
                 showDeleteOptionDialog();
                 break;
             case R.id.btn_setup:
-                updateSetupInformation();
+                updateSetupData();
                 break;
         }
     }
@@ -96,16 +89,18 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
         try {
             switch (url) {
                 case HttpPacket.GET_INFO_URL:
-                    JSONObject dataObj = resObj.getJSONArray(HttpPacket.PARAMS_ROW_DATA).getJSONObject(0);
+                    JSONObject dataObj = resObj.getJSONArray(HttpPacket.PARAMS_ROWS).getJSONObject(0);
                     showSetupInformation(dataObj);
-                    break;
-                case HttpPacket.UPDATE_INFO_URL:
-                    Toast.makeText(getApplicationContext(), "UPDATE SUCCESSFUL.", Toast.LENGTH_SHORT).show();
-                    pushNotification("SETUP");
                     break;
                 case HttpPacket.RESET_INFO_URL:
                     pushNotification("RESET");
-                    removeDeviceInSQLite();
+                    removeDevice();
+                    break;
+                case HttpPacket.UPDATE_INFO_URL:
+                    LoadingDialog.dismiss();
+                    Toast.makeText(getApplicationContext(), "설정이 변경되었습니다.", Toast.LENGTH_SHORT).show();
+                    pushNotification("SETUP");
+                    finish();
                     break;
             }
         } catch (JSONException e) {
@@ -119,7 +114,7 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
             if(position == -1)
                 return;
             locationInfo.setProvince(position);
-            spnProvince.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
+            spnProvince.setAdapter(new ArrayAdapter<>(getApplicationContext(),
                     R.layout.view_spinner_item,
                     locationInfo.getProvinceNames()));
             if(savedProvince != null && !savedProvince.equals("null")){
@@ -132,13 +127,6 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
 
         }
     };
-
-    private void pushNotification(String msg){
-        if(MQTTClient.getInstance().isConnected())
-            MQTTClient.getInstance().publish(deviceInfo.getId(), msg);
-        else
-            Toast.makeText(getApplicationContext(), "MQTT Message Error.", Toast.LENGTH_SHORT).show();
-    }
 
     public LatLng getLocationPoint(String city, String province){
         try {
@@ -158,11 +146,14 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
         }
     }
 
-    private void updateSetupInformation() {
+    private void updateSetupData() {
         if(spnCity.getSelectedItemPosition() == 0){
             Toast.makeText(getApplicationContext(), "날씨 지역 정보를 설정하세요.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        LoadingDialog.show(SetupActivity.this, "Update Information.");
+
         JSONObject paramsObj = new JSONObject();
         try {
             String cityName = spnCity.getSelectedItem().toString();
@@ -178,20 +169,75 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
             paramsObj.put(HttpPacket.PARAMS_LOCATION_LAT, String.valueOf(latLng.latitude));
             paramsObj.put(HttpPacket.PARAMS_LOCATION_LON, String.valueOf(latLng.longitude));
             paramsObj.put(HttpPacket.PARAMS_DISPLAY_TIME, etDisplayTime.getText().toString());
-            paramsObj.put(HttpPacket.PARAMS_CCTV_ENABLE, swcCCTVEnable.isChecked() ? "1" : "0");
             requestAPI(HttpPacket.UPDATE_INFO_URL, paramsObj);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    private void pushNotification(String msg){
+        if(MQTTClient.getInstance().isConnected())
+            MQTTClient.getInstance().publish(deviceInfo.getId(), msg);
+        else
+            Toast.makeText(getApplicationContext(), "MQTT Message Error.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void resetSetupData() {
+        JSONObject paramsObj = new JSONObject();
+        try {
+            paramsObj.put(HttpPacket.PARAMS_DEVICE_ID, deviceInfo.getId());
+            requestAPI(HttpPacket.RESET_INFO_URL, paramsObj);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void removeDevice(){
+        boolean result = dbHelper.deleteData(DBHelper.COL_DEVICE_ID, deviceInfo.getId());
+        Toast.makeText(getApplicationContext(),
+                result ? "디바이스가 삭제되었습니다." : "디바이스 삭제에 실패하였습니다\n잠시 후 다시 시도해주세요.",
+                Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
+    private void showDeleteOptionDialog(){
+        new NotifyDialog().show(SetupActivity.this, null,
+                "서버에 등록된 디바이스 설정을 초기화하시겠습니까?\n[아니오] 선택 시, 현재 디바이스에서만 정보가 삭제됩니다.",
+                "예", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        resetSetupData();
+                    }
+                }, "아니오", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeDevice();
+                    }
+                });
+    }
+
+    private void editDeviceName(){
+        if(etName.getText().length() == 0)
+            return;
+        ContentValues param = new ContentValues();
+        param.put(DBHelper.COL_NAME, etName.getText().toString());
+        boolean result = dbHelper.updateData(param, DBHelper.COL_DEVICE_ID, deviceInfo.getId());
+        if(result) {
+            deviceInfo.setName(etName.getText().toString());
+            Toast.makeText(getApplicationContext(), "디바이스 명칭이 변경되었습니다.", Toast.LENGTH_SHORT).show();
+            finish();
+        }else{
+            etName.setText(deviceInfo.getName());
+            Toast.makeText(getApplicationContext(), "디바이스 명칭의 변경에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void showSetupInformation(JSONObject dataObj) {
         try {
-            swcCCTVEnable.setChecked(dataObj.getString(HttpPacket.PARAMS_CCTV_ENABLE).equals("1"));
             etDisplayTime.setText(dataObj.getString(HttpPacket.PARAMS_DISPLAY_TIME));
-            savedCity = dataObj.getString(HttpPacket.PARAMS_CITY);
+            String savedCity = dataObj.getString(HttpPacket.PARAMS_CITY);
             savedProvince = dataObj.getString(HttpPacket.PARAMS_PROVINCE);
-            if(savedCity != null && !savedCity.equals("null")){
+            if(!savedCity.equals("null")){
                 spnCity.setSelection(locationInfo.getCityPosition(savedCity));
             }
         } catch (JSONException e) {
@@ -209,57 +255,7 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
         }
     }
 
-    private void editDeviceName(){
-        if(etName.getText().length() == 0)
-            return;
-        ContentValues param = new ContentValues();
-        param.put(DBHelper.COL_NAME, etName.getText().toString());
-        boolean result = dbHelper.updateData(param, DBHelper.COL_DEVICE_ID, deviceInfo.getId());
-        Toast.makeText(getApplicationContext(), "UPDATE RESULT : " + result, Toast.LENGTH_SHORT).show();
-        if(result)
-            deviceInfo.setName(etName.getText().toString());
-    }
-
-    private void showDeleteOptionDialog(){
-        new NotifyDialog().show(SetupActivity.this, null,
-                "서버에 등록된 설정을 초기화하시겠습니까?\n[아니오] 선택 시, 현재 디바이스에서만 정보가 삭제됩니다.",
-                "예", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        resetInformation();
-                    }
-                }, "아니오", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        removeDeviceInSQLite();
-                    }
-                });
-    }
-
-    private void resetInformation() {
-        JSONObject paramsObj = new JSONObject();
-        try {
-            paramsObj.put(HttpPacket.PARAMS_DEVICE_ID, deviceInfo.getId());
-            requestAPI(HttpPacket.RESET_INFO_URL, paramsObj);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void removeDeviceInSQLite(){
-        boolean result = dbHelper.deleteData(DBHelper.COL_DEVICE_ID, deviceInfo.getId());
-        Toast.makeText(getApplicationContext(), "DELETE RESULT : " + result, Toast.LENGTH_SHORT).show();
-        if(result) {
-            finish();
-        }
-    }
-
     private void init() {
-//        ActionBar actionBar = getSupportActionBar();
-//        Objects.requireNonNull(actionBar).setHomeAsUpIndicator(R.drawable.ic_back);
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-//        actionBar.setTitle("DEVICE SETUP");
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -271,22 +267,21 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
         deviceInfo = getIntent().getParcelableExtra("INFO");
         locationInfo = new LocationInfo(getApplicationContext());
 
-        btnEditName = findViewById(R.id.btn_edit_name);
+        Button btnEditName = findViewById(R.id.btn_edit_name);
         btnEditName.setOnClickListener(this);
-        btnDeleteDevice = findViewById(R.id.btn_delete);
+        Button btnDeleteDevice = findViewById(R.id.btn_delete);
         btnDeleteDevice.setOnClickListener(this);
-        btnSetup = findViewById(R.id.btn_setup);
+        Button btnSetup = findViewById(R.id.btn_setup);
         btnSetup.setOnClickListener(this);
 
         etName = findViewById(R.id.et_name);
+        etName.setText(deviceInfo.getName());
         etDisplayTime = findViewById(R.id.et_display_time);
-
-        swcCCTVEnable = findViewById(R.id.swc_cctv_enable);
 
         spnCity = findViewById(R.id.spn_city);
         spnProvince = findViewById(R.id.spn_province);
 
-        spnCity.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
+        spnCity.setAdapter(new ArrayAdapter<>(getApplicationContext(),
                 R.layout.view_spinner_item,
                 locationInfo.getCityList()));
         spnCity.setOnItemSelectedListener(itemSelectedListener);
