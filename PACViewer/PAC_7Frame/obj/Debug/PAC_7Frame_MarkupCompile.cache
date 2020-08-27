@@ -4,17 +4,17 @@
 exe
 C#
 .cs
-D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_7Frame\obj\Debug\
+C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_7Frame\obj\Debug\
 PAC_7Frame
 none
 false
 DEBUG;TRACE
-D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_7Frame\App.xaml
+C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_7Frame\App.xaml
 4484648013
 
-17-512539079
-17936011059
+181006589250
+17355281967
 Display\Displayer.xaml;MainWindow.xaml;ProgressMessage.xaml;RegisterWindow.xaml;
 
-False
+True
 

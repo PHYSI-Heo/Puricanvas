@@ -38,24 +38,16 @@ router.post('/upload', upload.array('fileName', 10), async(req, res) => {
 		const name = originalName.substring(0, divisionPos);
 
 		var originalPath = mainDir + '\\' + file.path;
-		var thumbPath = mainDir + '\\public\\thumb\\' + req.body.did;
 
 		if(videoTypes.includes(extension)){
 			const proc = new ffmpeg(originalPath).takeScreenshots({
 				count: 1,
 				timemarks: [ '5' ], // number of seconds
 				filename : fName + '.png',
-			}, thumbPath, (err) => {
+			}, originalPath, (err) => {
 				if(err)
 					console.log(err);
 			});
-		}else{
-			thumbPath = thumbPath + '\\' + file.filename;
-			try{
-				await fse.copy(originalPath, thumbPath);
-			}catch(err){
-				console.log(err);
-			}			
 		}
 	}
 	res.status(204).end(); 

@@ -18,9 +18,9 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".SetupActivity"
+        <activity android:name=".SetDeviceActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".IMGUploadActivity"/>
+        <activity android:name=".SetMediaActivity"/>
         <activity android:name=".RegisterActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
         <activity android:name=".DeviceActivity" />

@@ -2,14 +2,13 @@ package com.physi.pac.setter.mqtt;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
 
-import com.physi.pac.setter.utils.SystemEnv;
+import androidx.annotation.NonNull;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
@@ -20,38 +19,69 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-public class MQTTClient {
+public class MQTTPublisher {
 
-    private static final String TAG = MQTTClient.class.getSimpleName();
+    private static final String TAG = MQTTPublisher.class.getSimpleName();
 
-    public static final int CONNECTED = 300;
-    public static final int SUB_LISTEN = 301;
-    public static final int DISCONNECTED = 302;
+    private static final String BROKER_IP = "192.168.1.12";
+//    private static final String BROKER_IP = "13.124.176.173";
+    private static final String BROKER_PORT = "1883";
 
-    private static MQTTClient mqttClient = null;
+    private static final int CONNECTED = 300;
+    private static final int DISCONNECTED = 302;
+
+    @SuppressLint("StaticFieldLeak")
+    private static MQTTPublisher mPublisher = null;
     private MqttClient mClient = null;
-    private Handler handler = null;
     private MQTTConnectThread mConnectThread = null;
 
-    private MQTTClient(){
+    private Context context;
+    private boolean notifyMsg = false;
+    private String pubTopic, pubMessage;
 
+    public interface OnConnectedErrorListener{
+        void onError();
+    }
+    private OnConnectedErrorListener connectedErrorListener;
+
+    public void notifyMessage(String topic, String message, OnConnectedErrorListener listener){
+        this.pubTopic = topic;
+        this.pubMessage = message;
+        this.connectedErrorListener = listener;
+
+        if(mClient != null && mClient.isConnected())
+            publish(pubTopic, pubMessage);
+        else {
+            connect();
+            notifyMsg = true;
+        }
     }
 
-    public synchronized static MQTTClient getInstance(){
-        if(mqttClient == null)
-            mqttClient = new MQTTClient();
-        return mqttClient;
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            if(msg.what == CONNECTED){
+                boolean isConnected = (boolean)msg.obj;
+                Log.e(TAG, "Mqtt connected : " + isConnected);
+                if(isConnected && notifyMsg){
+                    publish(pubTopic, pubMessage);
+                    notifyMsg = false;
+                }
+            }
+        }
+    };
+
+    private MQTTPublisher(Context context){
+        this.context = context;
     }
 
-    public void setHandler(Handler handler){
-        this.handler = handler;
+    public synchronized static MQTTPublisher getInstance(Context context){
+        if(mPublisher == null)
+            mPublisher = new MQTTPublisher(context);
+        return mPublisher;
     }
 
-    public boolean isConnected(){
-        if(mqttClient == null)
-            return false;
-        return mClient.isConnected();
-    }
 
     public void disconnect(){
         if(mClient != null && mClient.isConnected()){
@@ -66,14 +96,14 @@ public class MQTTClient {
         mConnectThread = null;
     }
 
-    public void connect(Context context, String ip, String port){
+    public void connect(){
         if(mClient != null && mClient.isConnected())
             return;
 //         Get Android Device ID
         @SuppressLint("HardwareIds")
         String android_ID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         try {
-            mClient = new MqttClient("tcp://" + ip + ":" + port, android_ID, new MemoryPersistence());
+            mClient = new MqttClient("tcp://" + BROKER_IP + ":" + BROKER_PORT, android_ID, new MemoryPersistence());
             mClient.setCallback(mqttCallback);
             mConnectThread = new MQTTConnectThread();
             mConnectThread.start();
@@ -82,42 +112,10 @@ public class MQTTClient {
         }
     }
 
-    public void subscribe(String topic){
+    private void publish(String topic, String message){
         try {
-            if(mClient == null)
-                return;
-            mClient.subscribeWithResponse(topic, 0, iMqttMessageListener);
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private final IMqttMessageListener iMqttMessageListener = new IMqttMessageListener() {
-        @Override
-        public void messageArrived(String topic, MqttMessage message) throws Exception {
-            Bundle bundle = new Bundle();
-            bundle.putString("TOPIC", topic);
-            bundle.putString("MESSAGE", new String(message.getPayload()));
-            Message msg = new Message();
-            handler.obtainMessage(SUB_LISTEN, bundle).sendToTarget();
-        }
-    };
-
-    public void unsubscribe(String topic){
-        try {
-            if(mClient == null)
-                return;
-            mClient.unsubscribe(topic);
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void publish(String topic, String message){
-        try {
-            if(mClient == null)
-                return;
-            mClient.publish(topic, new MqttMessage(message.getBytes()));
+            if(mClient != null && mClient.isConnected())
+                mClient.publish(topic, new MqttMessage(message.getBytes()));
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -131,7 +129,7 @@ public class MQTTClient {
         }
 
         @Override
-        public void messageArrived(String topic, MqttMessage message) throws Exception {
+        public void messageArrived(String topic, MqttMessage message) {
 //            Log.e(TAG, "messageArrived");
         }
 
@@ -143,7 +141,6 @@ public class MQTTClient {
     };
 
     private class MQTTConnectThread extends Thread {
-
         @Override
         public void run() {
             super.run();
@@ -153,8 +150,10 @@ public class MQTTClient {
                 MqttConnectOptions options = new MqttConnectOptions();
                 options.setConnectionTimeout(2);
                 mClient.connect(options);
-            } catch (MqttException e ) {
+            } catch (MqttException e) {
                 e.printStackTrace();
+                if(connectedErrorListener != null)
+                    connectedErrorListener.onError();
             }finally {
                 assert mClient != null;
                 if(handler != null)

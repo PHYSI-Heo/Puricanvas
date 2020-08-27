@@ -6,12 +6,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.physi.pac.setter.utils.LoadingDialog;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class HttpRequestActivity extends AppCompatActivity {
 
     protected void requestAPI(String url, JSONObject params){
         HttpRequester requester = new HttpRequester("POST", url, params);
+        requester.setOnResponseListener(responseListener);
+        requester.execute();
+    }
+
+    protected void requestAPI(String url, JSONArray params){
+        HttpRequester requester = new HttpRequester("POST", url, params.toString());
         requester.setOnResponseListener(responseListener);
         requester.execute();
     }

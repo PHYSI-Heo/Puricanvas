@@ -106,7 +106,7 @@ router.post('/update/options', async(req, res)=>{
 router.post('/update/imgs', async(req, res)=>{
 	var resObj = {};
 	try{
-		await db.delete("img_resource", {"did" : "temp"}, null);
+		await db.delete("img_resource", {"did" : req.body[0].did}, null);
 		resObj.rows = await db.insert("img_resource", 
 			req.body);
 		resObj.result = 1001;

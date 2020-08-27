@@ -46,8 +46,8 @@ public class RegisterActivity extends HttpRequestActivity implements View.OnClic
     @Override
     protected void onHttpResponse(String url, JSONObject resObj) {
         super.onHttpResponse(url, resObj);
+        LoadingDialog.dismiss();
         if(url.equals(HttpPacket.EXIST_ID_URL)) {
-            LoadingDialog.dismiss();
             registerDevice(resObj);
         }
     }
@@ -55,6 +55,9 @@ public class RegisterActivity extends HttpRequestActivity implements View.OnClic
     private void registerSerialNumber(){
         if(etDeviceID.length() == 0 || etDeviceName.length() == 0)
             return;
+
+        LoadingDialog.show(RegisterActivity.this, "Register Serial Number.");
+
         JSONObject paramsObj = new JSONObject();
         try {
             paramsObj.put(HttpPacket.PARAMS_DEVICE_ID, etDeviceID.getText().toString());

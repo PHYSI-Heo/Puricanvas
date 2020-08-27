@@ -5,7 +5,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -17,14 +16,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.physi.pac.setter.data.DeviceInfo;
 import com.physi.pac.setter.http.HttpPacket;
 import com.physi.pac.setter.http.HttpRequestActivity;
-import com.physi.pac.setter.mqtt.MQTTClient;
+import com.physi.pac.setter.mqtt.MQTTPublisher;
 import com.physi.pac.setter.utils.DBHelper;
 import com.physi.pac.setter.utils.LoadingDialog;
 import com.physi.pac.setter.utils.LocationInfo;
@@ -37,9 +35,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-public class SetupActivity extends HttpRequestActivity implements View.OnClickListener {
+public class SetDeviceActivity extends HttpRequestActivity implements View.OnClickListener {
 
-    private static final String TAG = SetupActivity.class.getSimpleName();
+    private static final String TAG = SetDeviceActivity.class.getSimpleName();
 
     private EditText etName, etDisplayTime;
     private Spinner spnCity, spnProvince;
@@ -87,17 +85,18 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
     protected void onHttpResponse(String url, JSONObject resObj) {
         super.onHttpResponse(url, resObj);
         try {
+            LoadingDialog.dismiss();
             switch (url) {
                 case HttpPacket.GET_INFO_URL:
                     JSONObject dataObj = resObj.getJSONArray(HttpPacket.PARAMS_ROWS).getJSONObject(0);
                     showSetupInformation(dataObj);
                     break;
                 case HttpPacket.RESET_INFO_URL:
-                    pushNotification("RESET");
                     removeDevice();
+                    pushNotification("RESET");
+                    finish();
                     break;
                 case HttpPacket.UPDATE_INFO_URL:
-                    LoadingDialog.dismiss();
                     Toast.makeText(getApplicationContext(), "설정이 변경되었습니다.", Toast.LENGTH_SHORT).show();
                     pushNotification("SETUP");
                     finish();
@@ -152,7 +151,7 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
             return;
         }
 
-        LoadingDialog.show(SetupActivity.this, "Update Information.");
+        LoadingDialog.show(SetDeviceActivity.this, "Update Information.");
 
         JSONObject paramsObj = new JSONObject();
         try {
@@ -176,13 +175,28 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
     }
 
     private void pushNotification(String msg){
-        if(MQTTClient.getInstance().isConnected())
-            MQTTClient.getInstance().publish(deviceInfo.getId(), msg);
-        else
-            Toast.makeText(getApplicationContext(), "MQTT Message Error.", Toast.LENGTH_SHORT).show();
+        MQTTPublisher.getInstance(getApplicationContext()).notifyMessage(
+                deviceInfo.getId(),
+                msg,
+                new MQTTPublisher.OnConnectedErrorListener() {
+                    @Override
+                    public void onError() {
+                        SetDeviceActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(
+                                        getApplicationContext(),
+                                        "정보 갱신 알림을 전송할 수 없습니다.\n상태 변경을 위해 디스플레이를 재실행 하세요.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+        );
     }
 
     private void resetSetupData() {
+        LoadingDialog.show(SetDeviceActivity.this, "Reset Device Setting.");
         JSONObject paramsObj = new JSONObject();
         try {
             paramsObj.put(HttpPacket.PARAMS_DEVICE_ID, deviceInfo.getId());
@@ -197,11 +211,10 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
         Toast.makeText(getApplicationContext(),
                 result ? "디바이스가 삭제되었습니다." : "디바이스 삭제에 실패하였습니다\n잠시 후 다시 시도해주세요.",
                 Toast.LENGTH_SHORT).show();
-        finish();
     }
 
     private void showDeleteOptionDialog(){
-        new NotifyDialog().show(SetupActivity.this, null,
+        new NotifyDialog().show(SetDeviceActivity.this, null,
                 "서버에 등록된 디바이스 설정을 초기화하시겠습니까?\n[아니오] 선택 시, 현재 디바이스에서만 정보가 삭제됩니다.",
                 "예", new DialogInterface.OnClickListener(){
                     @Override
@@ -246,6 +259,7 @@ public class SetupActivity extends HttpRequestActivity implements View.OnClickLi
     }
 
     private void getSetupInformation(){
+        LoadingDialog.show(SetDeviceActivity.this, "Get Device Setting.");
         JSONObject paramsObj = new JSONObject();
         try {
             paramsObj.put(HttpPacket.PARAMS_DEVICE_ID, deviceInfo.getId());

@@ -45,6 +45,13 @@ public class HttpRequester extends AsyncTask<Void, Void, Void> {
         }
     }
 
+    public HttpRequester(String reqMethod, String url, String paramsObj){
+        requestMethod = reqMethod;
+        if(requestMethod.equals("POST")){
+            requestURL = url;
+            requestParams = paramsObj;
+        }
+    }
 
     private String createGetUrl(String reqURL, JSONObject paramsObj){
         StringBuilder paramsBuilder = new StringBuilder();

@@ -12,9 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.physi.pac.setter.data.DeviceInfo;
 import com.physi.pac.setter.list.DeviceAdapter;
-import com.physi.pac.setter.mqtt.MQTTClient;
+import com.physi.pac.setter.mqtt.MQTTPublisher;
 import com.physi.pac.setter.utils.DBHelper;
-import com.physi.pac.setter.utils.SystemEnv;
 
 import java.util.List;
 
@@ -36,8 +35,7 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_device);
 
         init();
-        MQTTClient.getInstance().connect(getApplicationContext(),
-                SystemEnv.BROKER_IP, SystemEnv.BROKER_PORT);
+        MQTTPublisher.getInstance(getApplicationContext()).connect();
     }
 
     @Override
@@ -52,7 +50,7 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MQTTClient.getInstance().disconnect();
+        MQTTPublisher.getInstance(getApplicationContext()).disconnect();
     }
 
 
@@ -65,13 +63,13 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onDataSetup(int index) {
-        startActivity(new Intent(DeviceActivity.this, SetupActivity.class)
+        startActivity(new Intent(DeviceActivity.this, SetDeviceActivity.class)
                 .putExtra("INFO", devices.get(index)));
     }
 
     @Override
     public void onImageSetup(int index) {
-        startActivity(new Intent(DeviceActivity.this, IMGUploadActivity.class)
+        startActivity(new Intent(DeviceActivity.this, SetMediaActivity.class)
                 .putExtra("ID", devices.get(index).getId()));
     }
 
