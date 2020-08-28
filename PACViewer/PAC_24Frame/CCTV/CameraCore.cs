@@ -51,17 +51,16 @@ namespace PAC_24Frame.CCTV
 
 
         private void Initialize()
-        {
-            string appStartPath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);         
-            CCTV_IP = File.ReadAllText(appStartPath + "\\LocalCamIP.txt");
-            Console.WriteLine("[CCTV] - Local IP Address : {0}", CCTV_IP);
+        {      
+            CCTV_IP = File.ReadAllText(SystemEnv.CCTV_IP_FILE);
+            Console.WriteLine("(CCTV) Local cctv ip address :: {0}", CCTV_IP);
 
             detectResetTimer = new DispatcherTimer();
             detectResetTimer.Interval = new TimeSpan(0, 0, 15);
             detectResetTimer.Tick += DetectResetTimer_Tick;
 
             m_bInitSDK = CHCNetSDK.NET_DVR_Init();
-            Console.WriteLine("[CCTV] - NET_DVR_Init Result : {0}", m_bInitSDK);
+            Console.WriteLine("(CCTV) NET_DVR_Init result = {0}", m_bInitSDK);
             if (m_bInitSDK)
             {
                 if (m_falarmData_V31 == null)
@@ -76,7 +75,7 @@ namespace PAC_24Frame.CCTV
         private void DetectResetTimer_Tick(object sender, EventArgs e)
         {
             detectCount = 0;
-            Console.WriteLine("[CCTV] - Detect Reset Count ({0}).", detectCount);
+            Console.WriteLine("(CCTV) Detect reset..({0})", detectCount);
             detectResetTimer.Stop();
         }
 
@@ -127,11 +126,11 @@ namespace PAC_24Frame.CCTV
                     m_lUserID = CHCNetSDK.NET_DVR_Login_V30(CCTV_IP, CCTV_PORT, ACCESS_ID, ACCESS_PWD, ref DeviceInfo);
                     if (m_lUserID < 0)
                     {
-                        Console.WriteLine("[CCTV] - Login Error : {0}", CHCNetSDK.NET_DVR_GetLastError());
+                        Console.WriteLine("(CCTV) Login error : {0}", CHCNetSDK.NET_DVR_GetLastError());
                     }
                     else
                     {
-                        Console.WriteLine("[CCTV] - Login Successful. ( User ID : {0} )", m_lUserID);
+                        Console.WriteLine("(CCTV) Login successful. (id = {0})", m_lUserID);
                     }
                 }
                 else
@@ -159,7 +158,7 @@ namespace PAC_24Frame.CCTV
         {
             if (m_lUserID < 0)
             {
-                Console.WriteLine("[CCTV] - Access Error.");
+                Console.WriteLine("(CCTV) Access error.");
                 return;
             }
 
@@ -193,17 +192,17 @@ namespace PAC_24Frame.CCTV
                 m_lRealHandle = CHCNetSDK.NET_DVR_RealPlay_V40(m_lUserID, ref lpPreviewInfo, null, IntPtr.Zero);
                 if (m_lRealHandle < 0)
                 {
-                    Console.WriteLine("[CCTV] - NET_DVR_RealPlay_V40 Failed : {0}", CHCNetSDK.NET_DVR_GetLastError());
+                    Console.WriteLine("(CCTV) NET_DVR_RealPlay_V40 failed = {0}", CHCNetSDK.NET_DVR_GetLastError());
                 }
                 else
                 {
-                    Console.WriteLine("[CCTV] - Start Preview.");
+                    Console.WriteLine("(CCTV) Start preview.");
                     // Event Trigger
                     if (ModeListener != null)
                         ModeListener(MODE_PREVIEW);
                 }
             }
-            //SystemEnv.ShowLogMessage("[CCTV] - RealHandle : {0}", m_lRealHandle);
+            //SystemEnv.ShowLogMessage("(CCTV) RealHandle : {0}", m_lRealHandle);
         }
 
         private void StopPreview()
@@ -212,15 +211,15 @@ namespace PAC_24Frame.CCTV
             {
                 if (!CHCNetSDK.NET_DVR_StopRealPlay(m_lRealHandle))
                 {
-                    Console.WriteLine("[CCTV] - NET_DVR_StopRealPlay Failed : {0}", CHCNetSDK.NET_DVR_GetLastError());
+                    Console.WriteLine("(CCTV) NET_DVR_StopRealPlay failed = {0}", CHCNetSDK.NET_DVR_GetLastError());
                 }
                 else
                 {
                     m_lRealHandle = -1;
-                    Console.WriteLine("[CCTV] - Stop Preview.");
+                    Console.WriteLine("(CCTV) Stop preview.");
                 }
             }
-            //SystemEnv.ShowLogMessage("[CCTV] - RealHandle : {0}", m_lRealHandle);
+            //SystemEnv.ShowLogMessage("(CCTV) RealHandle : {0}", m_lRealHandle);
         }
 
         private void RealDataCallBack(Int32 lRealHandle, UInt32 dwDataType, IntPtr pBuffer, UInt32 dwBufSize, IntPtr pUser)
@@ -251,15 +250,15 @@ namespace PAC_24Frame.CCTV
 
             if (m_lAlarmHandle < 0)
             {
-                Console.WriteLine("[CCTV] - NET_DVR_SetupAlarmChan_V41 Failed : {0)", CHCNetSDK.NET_DVR_GetLastError());
+                Console.WriteLine("(CCTV) NET_DVR_SetupAlarmChan_V41 failed = {0)", CHCNetSDK.NET_DVR_GetLastError());
             }
             else
             {
-                Console.WriteLine("[CCTV] - Start Alarm Listener.");
+                Console.WriteLine("(CCTV) Start alarm listener.");
                 if (ModeListener != null)
                     ModeListener(MODE_ALARM_LISTEN);
             }
-            //SystemEnv.ShowLogMessage("[CCTV] - AlarmHandle : {0}", m_lAlarmHandle);
+            //SystemEnv.ShowLogMessage("(CCTV) AlarmHandle : {0}", m_lAlarmHandle);
         }
 
         private void StopAlarmListener()
@@ -271,15 +270,15 @@ namespace PAC_24Frame.CCTV
             {
                 if (!CHCNetSDK.NET_DVR_CloseAlarmChan_V30(m_lAlarmHandle))
                 {
-                    Console.WriteLine("[CCTV] -  NET_DVR_CloseAlarmChan_V30 Failed : {0}", CHCNetSDK.NET_DVR_GetLastError());
+                    Console.WriteLine("(CCTV)  NET_DVR_CloseAlarmChan_V30 failed = {0}", CHCNetSDK.NET_DVR_GetLastError());
                 }
                 else
                 {
                     m_lAlarmHandle = -1;
-                    Console.WriteLine("[CCTV] - Stop Alarm Listener.");
+                    Console.WriteLine("(CCTV) Stop alarm listener.");
                 }
             }
-            //SystemEnv.ShowLogMessage("[CCTV] - AlarmHandle : {0}", m_lAlarmHandle);
+            //SystemEnv.ShowLogMessage("(CCTV) AlarmHandle : {0}", m_lAlarmHandle);
         }
 
 
@@ -305,7 +304,7 @@ namespace PAC_24Frame.CCTV
                         detectResetTimer.Stop();
                     detectResetTimer.Start();
                     detectCount++;
-                    Console.WriteLine("[CCTV] - Detect Count : {0}", detectCount);
+                    Console.WriteLine("(CCTV) Visitor Detecttion.({0})", detectCount);
 
                     if (detectCount >= GUEST_DETECT_COUNT)
                     {

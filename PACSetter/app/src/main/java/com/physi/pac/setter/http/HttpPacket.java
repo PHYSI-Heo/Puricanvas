@@ -2,8 +2,8 @@ package com.physi.pac.setter.http;
 
 public class HttpPacket {
 
-//    public static final String BASEURL = "http://192.168.1.12:3000";
-    public static final String BASEURL = "http://192.168.219.106:3000";
+    public static final String BASEURL = "http://192.168.1.12:3000";
+//    public static final String BASEURL = "http://192.168.219.106:3000";
 
     /*
          API

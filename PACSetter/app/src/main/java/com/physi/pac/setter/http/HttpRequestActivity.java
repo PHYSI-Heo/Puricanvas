@@ -28,6 +28,7 @@ public class HttpRequestActivity extends AppCompatActivity {
         public void onResponseListener(String url, String responseData) {
             try{
                 if(responseData == null){
+                    LoadingDialog.dismiss();
                     Toast.makeText(getApplicationContext(), "서버와 통신이 불안정합니다.", Toast.LENGTH_SHORT).show();
                 }else{
                     JSONObject resObj = new JSONObject(responseData);

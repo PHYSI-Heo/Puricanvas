@@ -33,7 +33,7 @@ namespace PAC_24Frame.Display
         private DispatcherTimer disPlayTimer;
         private DispatcherTimer fadeEffectTimer;
 
-        private List<ImageResource> imageSources;
+        private List<ImageInfo> imageSources;
         private int outputTime = 5, fadeEffectTime = 6;
         private int fadeEffectCount;
         private int sourcePosition = 0;
@@ -75,13 +75,13 @@ namespace PAC_24Frame.Display
         private void mPlayer_MediaOpened(object sender, RoutedEventArgs e)
         {
             isPlaying = true;
-            Console.WriteLine("[Display] - Media Source Opened.");
+            Console.WriteLine("(Display) Event listener :: Media source opened.");
         }
 
         private void mPlayer_MediaEnded(object sender, RoutedEventArgs e)
         {
             isPlaying = false;
-            Console.WriteLine("[Display] - Media Source Ended.");
+            Console.WriteLine("(Display) Event listener :: Media source ended.");
             fadeEffectCount = fadeEffectTime;
             fadeEffectTimer.Start();
         }
@@ -102,7 +102,7 @@ namespace PAC_24Frame.Display
             }
             else if (fadeEffectCount == 1)
             {
-                Console.WriteLine("[Display] - Disable Fade Effiect.");
+                Console.WriteLine("(Display) Effiect :: fade in.");
                 fadeEffectTimer.Stop();
                 //Cv_Cover.Visibility = Visibility.Collapsed;
             }
@@ -111,7 +111,7 @@ namespace PAC_24Frame.Display
 
         private void StartFadeAnimation()
         {
-            Console.WriteLine("[Display] - Enable Fade Effiect.");
+            Console.WriteLine("(Display) Effiect :: fade out.");
             DoubleAnimation fadeAnimation = new DoubleAnimation();          
             fadeAnimation.From = 0;
             fadeAnimation.To = 1;
@@ -120,7 +120,7 @@ namespace PAC_24Frame.Display
             Cv_Cover.BeginAnimation(Canvas.OpacityProperty, fadeAnimation);
         }
 
-        public void SetImageResources(List<ImageResource> sources)
+        public void SetImageResources(List<ImageInfo> sources)
         {
             imageSources = sources;
         }
@@ -179,10 +179,10 @@ namespace PAC_24Frame.Display
             if (sourcePosition == imageSources.Count)
                 sourcePosition = 0;
 
-            Console.WriteLine("[Display] - Show Image : ({0})",
+            Console.WriteLine("(Display) Img source = ({0})",
                 imageSources[sourcePosition].GetUri().ToString());
 
-            if (imageSources[sourcePosition].GetFileType() == ImageResource.FILE_TYPE_PICTURE)
+            if (imageSources[sourcePosition].GetFileType() == ImageInfo.TYPE_PICTURE)
             {
                 if (mPlayer.Visibility == Visibility.Visible)
                     mPlayer.Visibility = Visibility.Collapsed;

@@ -11,6 +11,7 @@ namespace PAC_7Frame.Http
 {
     public class HTTPClient
     {
+
         public async Task<JObject> Requester(string url, string method, JObject param)
         {
             JObject resultObj = null;
@@ -37,26 +38,28 @@ namespace PAC_7Frame.Http
             }
             catch (Exception e)
             {
-                Console.WriteLine("[HTTP] - Request Error : " + e.Message);
+                Console.WriteLine("Http Err = {0}", e.Message);
             }
 
             return resultObj;
         }
 
 
-
-        public async Task DownloadFile(Uri uri, string saveFilePath)
+        public async Task<bool> DownloadFile(Uri uri, string saveFilePath)
         {
             try
             {
                 using (var client = new WebClient())
                 {
                     await client.DownloadFileTaskAsync(uri, saveFilePath);
+                    return true;
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("[HTTP] - Download Error : {0}", e.Message);
+                Console.WriteLine("Http Err = {0}", e.Message);
+                File.Delete(saveFilePath);
+                return false;
             }
         }
     }

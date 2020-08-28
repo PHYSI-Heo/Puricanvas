@@ -113,6 +113,7 @@ public class SetMediaActivity extends HttpRequestActivity implements View.OnClic
             }else if(url.equals(HttpPacket.UPDATE_IMGs_URL)){
                 pushNotification("IMG");
                 Toast.makeText(getApplicationContext(), "이미지/영상 정보가 갱신되었습니다.", Toast.LENGTH_SHORT).show();
+//                finish();
             }
         } catch (JSONException e) {
             e.printStackTrace();

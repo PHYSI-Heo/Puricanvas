@@ -8,6 +8,7 @@ const ffmpeg = require('fluent-ffmpeg');
 
 const mainDir = path.dirname(require.main.filename);
 const rootPath = __dirname.substring(0, __dirname.lastIndexOf('\\'));
+
 const videoTypes = ['.mp4', '.avi', '.wmv', '.mov', '.flv',];
 
 module.exports = router;
@@ -27,7 +28,7 @@ let upload = multer({
 });
 
 
-router.post('/upload', upload.array('fileName', 10), async(req, res) => {  
+router.post('/upload', upload.array('filename', 10), async(req, res) => {  
 	for await (const file of req.files){
 		console.log("### Upload file ###");
 		console.log(file);
@@ -36,15 +37,14 @@ router.post('/upload', upload.array('fileName', 10), async(req, res) => {
 		const divisionPos = originalName.lastIndexOf('.');
 		const extension = originalName.substring(divisionPos);
 		const name = originalName.substring(0, divisionPos);
-
-		var originalPath = mainDir + '\\' + file.path;
+		const originalPath = mainDir + '\\' + file.path;
 
 		if(videoTypes.includes(extension)){
 			const proc = new ffmpeg(originalPath).takeScreenshots({
 				count: 1,
 				timemarks: [ '5' ], // number of seconds
-				filename : fName + '.png',
-			}, originalPath, (err) => {
+				filename : name + '.png',
+			}, mainDir + '\\' + file.destination, (err) => {
 				if(err)
 					console.log(err);
 			});
@@ -54,7 +54,8 @@ router.post('/upload', upload.array('fileName', 10), async(req, res) => {
 });
 
 
-router.post('/download/:did/:filename', (req, res)=>{
-	var filePath = rootPath + "/public/res/" + req.params.did + '/' + req.params.fileName;
+router.get('/:did/:filename/download', (req, res)=>{
+	var filePath = rootPath + "/public/res/" + req.params.did + '/' + req.params.filename;
+	console.log(filePath);
 	res.download(filePath);
 });

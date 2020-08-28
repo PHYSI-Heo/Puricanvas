@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -44,9 +45,16 @@ namespace PAC_24Frame
             }
             catch (Exception e)
             {
-                Console.WriteLine("# Init Folder Err.\n > {0}", e.Message);
+                Console.WriteLine("(System) Init Error = {0}", e.Message);
             }
         }
-               
+
+        public static string[] IMG_TYPEs = new string[] { ".jpg", ".png", };
+
+
+        private static string applicationPath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+        public static string CCTV_IP_FILE = applicationPath + @"\LocalCamIP.txt";
+        public static string DEVICE_ID_FILE = applicationPath + @"\ConfigSerailNumber.txt";
+
     }
 }

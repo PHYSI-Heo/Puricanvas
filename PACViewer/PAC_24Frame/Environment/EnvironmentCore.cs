@@ -61,12 +61,12 @@ namespace PAC_24Frame.Environment
                 JObject obj = await httpClient.Requester(url, "GET", null);
                 //Console.WriteLine("# Public Quality.\n{0}", obj.ToString());
 
-                if (obj.GetValue(HTTPPacket.Key_Air_Status).ToString().Equals("ok"))
+                if (obj != null && obj.GetValue(HTTPPacket.Key_Air_Status).ToString().Equals("ok"))
                 {
                     JObject dataObj = JObject.Parse(obj[HTTPPacket.Key_Air_Data][HTTPPacket.Key_Air_Info].ToString());
                     string pm10 = dataObj[HTTPPacket.Key_Air_PM10][HTTPPacket.Key_Air_Value].ToString();
                     string pm25 = dataObj[HTTPPacket.Key_Air_PM25][HTTPPacket.Key_Air_Value].ToString();
-                    Console.WriteLine("[Public API] - Air Quality : pm10 ({0}), pm25 ({1})", pm10, pm25);
+                    Console.WriteLine("(Public API) Dust :: pm10 ({0}), pm25 ({1})", pm10, pm25);
                     environmentData.SetDust(pm10, pm25);
                 }
             }
@@ -85,7 +85,7 @@ namespace PAC_24Frame.Environment
                 JObject obj = await httpClient.Requester(url, "GET", null);
                 //Console.WriteLine("# Public Weather.\n{0}", obj.ToString());
 
-                if (obj.GetValue(HTTPPacket.Key_WT_Code).ToString().Equals("200"))
+                if (obj != null && obj.GetValue(HTTPPacket.Key_WT_Code).ToString().Equals("200"))
                 {
                     JObject dataObj = JObject.Parse(obj[HTTPPacket.Key_WT_List][0].ToString());
                     float tempValue = float.Parse(dataObj[HTTPPacket.Key_WT_Main][HTTPPacket.Key_WT_Temp].ToString());
@@ -95,7 +95,7 @@ namespace PAC_24Frame.Environment
                     string weather = weatherObj[HTTPPacket.Key_WT_Main].ToString();
                     string weather_id = weatherObj[HTTPPacket.Key_WT_ID].ToString();
                     string description = weatherObj[HTTPPacket.Key_WT_Description].ToString();
-                    Console.WriteLine("[Public API] - Weather : {0}({1}) / {2}'c, {3}%", weather, description, temp, humidity);
+                    Console.WriteLine("(Public API) DWeather : {0}({1}) / {2}'c, {3}%", weather, description, temp, humidity);
                     environmentData.SetWeather(temp, humidity, weather, weather_id, description);
                 }
             }

@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         WindowState="Normal"
-        WindowStyle="SingleBorderWindow"
+        WindowStyle="None"
         Topmost="True"
         Title="MainWindow" ShowInTaskbar="False" Width="1920" Height="1080" ContentRendered="Window_ContentRendered" ResizeMode="NoResize" >
 
@@ -18,7 +18,7 @@
         <Grid.Background>
             <ImageBrush ImageSource="Res/img_logo.png"/>
         </Grid.Background>
-                
+
         <Display:Displayer x:Name="Dp_Image" HorizontalAlignment="Left" VerticalAlignment="Top" Height="1080" Width="1920"/>
         <Environment:EnvironmentBar x:Name="Eb_Air_State" HorizontalAlignment="Left" Height="64" VerticalAlignment="Bottom" Width="1910" Margin="5,0,0,5"/>
         <local:ProgressMessage x:Name="Pg_Loading" HorizontalAlignment="Center" Height="56" Width="256" VerticalAlignment="Top" Visibility="Collapsed"/>
@@ -27,8 +27,7 @@
             <wf:PictureBox x:Name="Pb_CCTV"/>
         </WindowsFormsHost>
         
-        <Button Content="Reset ID" HorizontalAlignment="Left" VerticalAlignment="Top" Width="128" Height="24" x:Name="Btn_ResetId" Click="Btn_ResetId_Click" Margin="0,24,0,0" Visibility="Visible"/>
-        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Width="128" Height="20" Background="White" Opacity="0.5" x:Name="Tb_Product_ID" Text="Product Key" TextAlignment="Center" Visibility="Hidden"/>
+        <Button x:Name="Btn_ResetCode" Content="Reset Device ID" HorizontalAlignment="Left" Margin="10,974,0,0" VerticalAlignment="Top" Width="128" Height="32" Click="Btn_ResetCode_Click" Visibility="Hidden"/>
 
     </Grid>
 

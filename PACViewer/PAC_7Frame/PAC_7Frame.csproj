@@ -66,14 +66,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CCTV\CameraCore.cs" />
-    <Compile Include="CCTV\CHCNetSDK.cs" />
     <Compile Include="Display\Displayer.xaml.cs">
       <DependentUpon>Displayer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Display\ImageResource.cs" />
+    <Compile Include="Display\ImageInfo.cs" />
     <Compile Include="Display\ResourceCore.cs" />
-    <Compile Include="Display\SettingData.cs" />
+    <Compile Include="Display\DeviceInfo.cs" />
     <Compile Include="Http\HTTPClient.cs" />
     <Compile Include="Http\HTTPPacket.cs" />
     <Compile Include="Mqtt\MQTTClient.cs" />

@@ -5,6 +5,7 @@ using PAC_24Frame.Mqtt;
 using PAC_24Frame.Uart;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace PAC_24Frame
         private CameraCore cameraCore;
         private Serial serial;
         
-        private DispatcherTimer weatherResetTimer;
+        private DispatcherTimer weatherRenewTimer;
         private DispatcherTimer cctvTimer;
 
         public MainWindow()
@@ -46,12 +47,11 @@ namespace PAC_24Frame
             resourceCore = new ResourceCore();
             environmentCore = new EnvironmentCore();
             mqttClient = new MQTTClient();
-            serial = new Serial(9600);
+            serial = new Serial();
 
-            weatherResetTimer = new DispatcherTimer();
-            weatherResetTimer.Tick += WeatherResetTimer_Tick;
-            weatherResetTimer.Interval = new TimeSpan(0, 30, 0);
-
+            weatherRenewTimer = new DispatcherTimer();
+            weatherRenewTimer.Tick += WeatherResetTimer_Tick;
+            weatherRenewTimer.Interval = new TimeSpan(0, 30, 0);
             cctvTimer = new DispatcherTimer();
             cctvTimer.Tick += CctvTimer_Tick;
             cctvTimer.Interval = new TimeSpan(0, 0, 10);
@@ -62,16 +62,10 @@ namespace PAC_24Frame
             if (!CheckProductCode())
                 return;
 
-            string productKey = SystemEnv.GetProductKey();
-            Console.WriteLine("Product Code : {0}", productKey);
-            Tb_Product_ID.Text = SystemEnv.GetProductKey();
-
             SetConfiguration(true, true);
             StartMQTT();
-            ConnectSerial();
+            ConnectUartSerial();
             AccessCCTV();
-
-            weatherResetTimer.Start();
         }
         private void CctvTimer_Tick(object sender, EventArgs e)
         {
@@ -134,13 +128,17 @@ namespace PAC_24Frame
             }
         }
         
-        private async void ConnectSerial()
+        private async void ConnectUartSerial()
         {
-            bool connected = await serial.Open();
-            if (connected)
+            string[] ports = serial.GetCompoartList();
+            if(ports != null && ports.Length != 0)
             {
-                serial.ReceiveListener += Serial_ReceiveListener;
-            }
+                bool connected = await serial.Open(ports.Last<string>(), 9600);
+                if (connected)
+                {
+                    serial.ReceiveListener += Serial_ReceiveListener;
+                }
+            }            
         }
         
         private async void StartMQTT()
@@ -161,14 +159,15 @@ namespace PAC_24Frame
             if (isImageResource)
             {
                 Pg_Loading.SetMessage("이미지 정보를 가져옵니다.");
-                List<ImageResource> sources = await resourceCore.GetImageSources();
+                List<ImageInfo> sources = await resourceCore.GetImageSources();
                 Dp_Image.SetImageResources(sources);
             }
 
             if (isSetting)
             {
+                weatherRenewTimer.Stop();
                 Pg_Loading.SetMessage("설정 정보를 가져옵니다.");
-                SettingData settingData = await resourceCore.GetSettingData();
+                DeviceInfo settingData = await resourceCore.GetDeviceOptions();
                 if(settingData != null)
                 {
                     environmentCore.SetEnvironmentOptions(settingData.GetCity(), settingData.GetProvince(), settingData.GetLatitude(), settingData.GetLongitude());
@@ -176,6 +175,8 @@ namespace PAC_24Frame
 
                     Dp_Image.SetOutputTime(int.Parse(settingData.GetDisplayTime()));
                     Eb_Air_State.ShowPublicData(environmentData);
+
+                    weatherRenewTimer.Start();
                 }               
             }
 
@@ -185,9 +186,7 @@ namespace PAC_24Frame
 
         private bool CheckProductCode()
         {
-            SystemEnv.SetProductKey("0");
-            string productKey = SystemEnv.GetProductKey();
-            if (productKey == "0")
+            if (SystemEnv.GetProductKey() == "0")
             {
                 RegisterKeyDialog registerView = new RegisterKeyDialog();
                 registerView.Owner = this;
@@ -197,10 +196,10 @@ namespace PAC_24Frame
             return true;          
         }
 
-        private void Btn_ResetId_Click(object sender, RoutedEventArgs e)
+        private void Btn_ResetCode_Click(object sender, RoutedEventArgs e)
         {
             SystemEnv.SetProductKey("0");
-            Application.Current.Shutdown();
+            File.Delete(SystemEnv.DEVICE_ID_FILE);
         }
     }
 }

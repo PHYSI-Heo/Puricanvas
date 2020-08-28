@@ -81,7 +81,6 @@ D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_24Frame\obj\Debug\PAC_24Fra
 D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_24Frame\obj\Debug\PAC_24Frame.pdb
 D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_24Frame\obj\Debug\RegisterKeyDialog.g.cs
 D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_24Frame\obj\Debug\RegisterKeyDialog.baml
-D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_24Frame\obj\Debug\PAC_24Frame.csprojAssemblyReference.cache
 C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\bin\Debug\PAC_24Frame.exe.config
 C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\bin\Debug\PAC_24Frame.exe
 C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\bin\Debug\PAC_24Frame.pdb

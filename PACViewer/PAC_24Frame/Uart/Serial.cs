@@ -12,31 +12,15 @@ namespace PAC_24Frame.Uart
 
         private SerialPort serial;
 
-        private int baudrate = 9600;
-        private string comPort = "COM5";
-
-
         public delegate void Receive_Listener(string data);
         public event Receive_Listener ReceiveListener;
-
-        public Serial(int baudrate)
-        {
-            this.comPort = SerialPort.GetPortNames().Last<string>();
-            this.baudrate = baudrate;
-        }
-
-        public Serial(string comPort, int baudrate)
-        {
-            this.comPort = comPort;
-            this.baudrate = baudrate;
-        }
 
         public string[] GetCompoartList()
         {
             return SerialPort.GetPortNames();
         }
 
-        public async Task<bool> Open()
+        public async Task<bool> Open(string comPort, int baudrate)
         {
             if (comPort.Equals("COM1"))
                 return false;
@@ -48,8 +32,6 @@ namespace PAC_24Frame.Uart
                     if (serial != null && serial.IsOpen)
                         return;
                     
-                    Console.WriteLine("[Serial] - Port({0}) Open..( Baudrate : {1})", comPort, baudrate);
-
                     serial = new SerialPort();
                     serial.PortName = comPort;
                     serial.BaudRate = baudrate;
@@ -70,6 +52,8 @@ namespace PAC_24Frame.Uart
                     Console.WriteLine(e.StackTrace);
                 }
             });
+
+            Console.WriteLine("(Serial) Port({0}), Baudrate({1}) = {2})", comPort, baudrate, serial.IsOpen);
             return serial.IsOpen;
         }
 
@@ -93,18 +77,18 @@ namespace PAC_24Frame.Uart
 
         private void Serial_Disposed(object sender, EventArgs e)
         {
-            Console.WriteLine("[Serial] - {0} Disposed.", comPort);
+            Console.WriteLine("(Serial) Disposed.");
         }
 
         private void Serial_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
-            Console.WriteLine("[Serial] - {0} Receive Error.", comPort);
+            Console.WriteLine("(Serial) Receive Error.");
         }
 
         private void Serial_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             string recvData = serial.ReadLine().Trim();
-            Console.WriteLine("[Serial] - Receive Message : {0}", recvData);
+            Console.WriteLine("(Serial) Receive Message > {0}", recvData);
             if (ReceiveListener != null)
                 ReceiveListener(recvData);
         }

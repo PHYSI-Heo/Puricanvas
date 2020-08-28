@@ -29,9 +29,6 @@ public class RegisterActivity extends HttpRequestActivity implements View.OnClic
         setContentView(R.layout.activity_register);
 
         init();
-
-        etDeviceID.setText("AAAAAA");
-        etDeviceName.setText("AA");
     }
 
     @Override

@@ -92,13 +92,12 @@ public class SetDeviceActivity extends HttpRequestActivity implements View.OnCli
                     showSetupInformation(dataObj);
                     break;
                 case HttpPacket.RESET_INFO_URL:
-                    removeDevice();
                     pushNotification("RESET");
-                    finish();
+                    removeDevice();
                     break;
                 case HttpPacket.UPDATE_INFO_URL:
-                    Toast.makeText(getApplicationContext(), "설정이 변경되었습니다.", Toast.LENGTH_SHORT).show();
                     pushNotification("SETUP");
+                    Toast.makeText(getApplicationContext(), "설정이 변경되었습니다.", Toast.LENGTH_SHORT).show();
                     finish();
                     break;
             }
@@ -211,6 +210,8 @@ public class SetDeviceActivity extends HttpRequestActivity implements View.OnCli
         Toast.makeText(getApplicationContext(),
                 result ? "디바이스가 삭제되었습니다." : "디바이스 삭제에 실패하였습니다\n잠시 후 다시 시도해주세요.",
                 Toast.LENGTH_SHORT).show();
+        if(result)
+            finish();
     }
 
     private void showDeleteOptionDialog(){

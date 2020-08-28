@@ -2,6 +2,8 @@
 using PAC_24Frame.Http;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,7 +44,9 @@ namespace PAC_24Frame
                 ShowErrorMessage("제품코드(6 자리)를 입력하세요.");
                 return;
             }
+            Btn_Create.IsEnabled = Btn_Register.IsEnabled = false;
             RequestRegisterKey(code);
+            Btn_Create.IsEnabled = Btn_Register.IsEnabled = true;
         }
 
         private void Btn_Create_Click(object sender, RoutedEventArgs e)
@@ -65,24 +69,30 @@ namespace PAC_24Frame
             {
                 JObject paramObj = new JObject();
                 paramObj.Add(HTTPPacket.Param_Device_ID, code);
-                JObject obj = await httpClient.Requester(HTTPPacket.Url_Register_ID, "POST", paramObj);
-                if (obj == null)
-                    return;
-                string resCode = obj.GetValue(HTTPPacket.Param_Res_Code).ToString();
-                Console.WriteLine("[Register] - Register Product Result.\n{0}", obj.ToString());
-
-                if (resCode.Equals(HTTPPacket.Res_Success))
+                JObject obj = await httpClient.Requester(HTTPPacket.Url_Register_ID, "POST", paramObj);           
+                
+                if(obj != null)
                 {
-                    SystemEnv.SetProductKey(code);
-                    this.DialogResult = true;
-                    this.Close();
+                    string resCode = obj.GetValue(HTTPPacket.Param_Res_Result).ToString();
+                    Console.WriteLine("(Register) Register result = {0}", obj.ToString());
+                    if (resCode.Equals(HTTPPacket.Res_Success))
+                    {
+                        SystemEnv.SetProductKey(code);
+                        File.WriteAllText(SystemEnv.DEVICE_ID_FILE, code);
+                        this.DialogResult = true;
+                        this.Close();
+                    }
+                    else
+                    {
+                        ShowErrorMessage("제품 등록에 실패하였습니다.");
+                    }
                 }
                 else
                 {
-                    ShowErrorMessage("제품 등록에 실패하였습니다.");
-                }
+                    ShowErrorMessage("서버와 연결이 불안정합니다. 잠시 후 다시 시도해주세요.");
+                }               
             }
-            catch (NullReferenceException e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 ShowErrorMessage("서버와 연결이 불안정합니다. 잠시 후 다시 시도해주세요.");

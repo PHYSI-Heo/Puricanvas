@@ -101,7 +101,7 @@
             android:shadowRadius="4"
             android:text="Create ID"
             android:textColor="@android:color/white"
-            android:visibility="visible"/>
+            android:visibility="gone"/>
 
     </LinearLayout>
 

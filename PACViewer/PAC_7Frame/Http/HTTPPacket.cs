@@ -12,28 +12,31 @@ namespace PAC_7Frame.Http
          *      REST API
          */
         private const string BaseUrl = "http://192.168.1.12:3000";
+        //private const string BaseUrl = "http://13.124.176.173:3000";
 
         //  Web Server Url
-        public const string Url_Create_ID = BaseUrl + "/identity/create";
-        public const string Url_Exist_ID = BaseUrl + "/identity/exist";
-        public const string Url_Register_ID = BaseUrl + "/db/register";
-        public const string Url_Get_Info = BaseUrl + "/db/get/info";
-        public const string Url_Get_IMGs = BaseUrl + "/db/get/imgs";
-        public const string Url_IMG_Downlaod = BaseUrl + "/image/download";
-        public const string Url_Get_Default_IMGs = BaseUrl + "/image/default/imgs";
+        public const string Url_Exist_ID = BaseUrl + "/device/exist/code";
+        public const string Url_Register_ID = BaseUrl + "/device/register/code";
+        public const string Url_Get_Info = BaseUrl + "/device/get/options";
+        public const string Url_Get_IMGs = BaseUrl + "/device/get/imgs";
+
+        public const string Url_IMG_Download = BaseUrl + "/image";
+
         //  Params 
-        public const string Param_Res_Code = "resCode";
+        public const string Param_Res_Result = "result";
         public const string Param_Res_Rows = "rows";
+        public const string Param_Key_Exist = "exist";
+
         public const string Param_Device_ID = "did";
-        public const string Param_Exist_ID = "exist";
         public const string Param_City = "city";
         public const string Param_Province = "province";
         public const string Param_Location_Lat = "lat";
         public const string Param_Location_Lon = "lon";
-        public const string Param_Display_Time = "displayTime";
-        public const string Param_CCTV_Enable = "cctvEnable";
-        public const string Param_IMG_Name = "fileName";
-        public const string Param_File_List = "files";
+        public const string Param_Display_Time = "playtime";
+
+        public const string Param_IMG_Order = "_order";
+        public const string Param_User_File = "usf";
+        public const string Param_IMG_Name = "filename";
 
         public const string Res_Success = "1001";
 

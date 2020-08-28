@@ -16,6 +16,7 @@ namespace PAC_7Frame.Mqtt
 
         private MqttClient mqttClient = null;
 
+        //private const string BROKER_IP = "13.124.176.173";
         private const string BROKER_IP = "192.168.1.12";
 
         public void StartSubscribe()
@@ -40,7 +41,7 @@ namespace PAC_7Frame.Mqtt
                 catch (MqttConnectionException e)
                 {
                     Console.WriteLine(e.StackTrace);
-                }                
+                }
             });
             Console.WriteLine("[MQTT] - Connect Result : {0}", mqttClient.IsConnected);
             return mqttClient != null && mqttClient.IsConnected;

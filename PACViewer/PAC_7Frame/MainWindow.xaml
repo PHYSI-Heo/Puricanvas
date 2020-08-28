@@ -8,8 +8,8 @@
         xmlns:Display="clr-namespace:PAC_7Frame.Display" x:Class="PAC_7Frame.MainWindow"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        WindowState="Maximized"
-        Topmost="True"
+        WindowState="Normal"
+        Topmost="False"
         ContentRendered="Window_ContentRendered"    
         Title="MainWindow" ShowInTaskbar="False" Width="1024" Height="600" ResizeMode="NoResize" WindowStyle="None">
 
