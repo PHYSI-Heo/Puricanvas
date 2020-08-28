@@ -76,3 +76,4 @@ D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_7Frame\obj\Debug\PAC_7Frame
 D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_7Frame\obj\Debug\PAC_7Frame.csproj.CopyComplete
 D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_7Frame\obj\Debug\PAC_7Frame.exe
 D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_7Frame\obj\Debug\PAC_7Frame.pdb
+D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_7Frame\obj\Debug\PAC_7Frame.csprojAssemblyReference.cache

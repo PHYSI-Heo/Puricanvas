@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterScreen"
         WindowState="Normal"
         WindowStyle="None"
-        Topmost="True"
+        Topmost="False"
         Title="MainWindow" ShowInTaskbar="False" Width="1920" Height="1080" ContentRendered="Window_ContentRendered" ResizeMode="NoResize" >
 
     <Grid x:Name="MainFrame" Width="1920" Height="1080" 
