@@ -5,30 +5,46 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PAC_24Frame.Environment"
              mc:Ignorable="d" 
-             d:DesignHeight="64" d:DesignWidth="1910" Width="1910" Height="64">
-    <Grid Width="1910" Height="64" Background="White" Opacity="0.4">
+             d:DesignHeight="48" d:DesignWidth="1910" Width="1910" Height="48">
+    <Grid Width="1910" Height="48" Opacity="0.8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="59*"/>
+            <ColumnDefinition Width="88*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FF363434" Offset="0.8"/>
+                <GradientStop Color="Transparent" Offset="0"/>
+            </LinearGradientBrush>
+        </Grid.Background>
 
-        <Image x:Name="Ic_Weather" Source="Icon/ic_clear_sky.png" Width="48" Height="40" HorizontalAlignment="Left" Margin="32,12,0,12" />
-        <TextBlock x:Name="Tb_Weather" HorizontalAlignment="Left" Text="--" Margin="88,22,0,22" VerticalAlignment="Center" Width="104" FontSize="20" FontWeight="Bold" TextAlignment="Center"  />
+        <Image x:Name="Ic_Weather" Source="Icon/ic_clear_sky.png" Width="32" Height="32" HorizontalAlignment="Left" Margin="40,8,0,8" />
+        <TextBlock x:Name="Tb_Weather" HorizontalAlignment="Left" Text="맑음" Margin="72,13,0,13" VerticalAlignment="Center" 
+                   Width="72" FontSize="16" FontWeight="Bold" TextAlignment="Center" Foreground="White" />
 
-        <Image x:Name="Ic_Temperature" Source="Icon/ic_temperature.png" Width="48" Height="40" HorizontalAlignment="Left" Margin="216,12,0,12" />
-        <TextBlock x:Name="Tb_Temperature" HorizontalAlignment="Left" Text="29.1 ℃" Margin="272,22,0,22" VerticalAlignment="Center" Width="104" FontSize="20" FontWeight="Bold" TextAlignment="Center" FontFamily="Malgun Gothic"  />
+        <Image x:Name="Ic_Temperature" Source="Icon/ic_temperature.png" Width="32" Height="32" HorizontalAlignment="Left" Margin="160,8,0,8" />
+        <TextBlock x:Name="Tb_Temperature" HorizontalAlignment="Left" Text="-- ℃" Margin="192,13,0,13" VerticalAlignment="Center" 
+                   Width="96" FontSize="16" FontWeight="Bold" TextAlignment="Center" Foreground="White" />
 
-        <Image x:Name="Ic_Humidity" Source="Icon/ic_humidity.png" Width="48" Height="40" HorizontalAlignment="Left" Margin="400,12,0,12" />
-        <TextBlock x:Name="Tb_Humidity" HorizontalAlignment="Left" Text="-- %" Margin="456,0,0,0" VerticalAlignment="Center" Width="104" FontSize="20" FontWeight="Bold" TextAlignment="Center"  />
+        <Image x:Name="Ic_Humidity" Source="Icon/ic_humidity.png" Width="32" Height="32" HorizontalAlignment="Left" Margin="296,8,0,8" />
+        <TextBlock x:Name="Tb_Humidity" HorizontalAlignment="Left" Text="-- %" Margin="328,13,0,13" VerticalAlignment="Center" 
+                   Width="96" FontSize="16" FontWeight="Bold" TextAlignment="Center" Foreground="White" />
 
-        <Image x:Name="Ic_P_Dust_PM25" Source="Icon/ic_dust_pm25.png" Width="48" Height="40" HorizontalAlignment="Left" Margin="584,12,0,12" />
-        <TextBlock x:Name="Tb_P_Dust_PM25" HorizontalAlignment="Left" Text="-- ㎍/㎥" Margin="640,0,0,0" VerticalAlignment="Center" Width="104" FontSize="20" FontWeight="Bold" TextAlignment="Center"  />
+        <Image x:Name="Ic_P_Dust_PM25" Source="Icon/ic_dust_pm25.png" Width="32" Height="32" HorizontalAlignment="Left" Margin="432,8,0,8" />
+        <TextBlock x:Name="Tb_P_Dust_PM25" HorizontalAlignment="Left" Text="-- ㎍/㎥" Margin="464,13,0,13" VerticalAlignment="Center" 
+                   Width="96" FontSize="16" FontWeight="Bold" TextAlignment="Center" Foreground="White" />
 
-        <Image x:Name="Ic_Voc" Source="Icon/ic_voc.png" Width="48" Height="40" HorizontalAlignment="Right" Margin="0,12,168,12"  />
-        <TextBlock x:Name="Tb_Voc" HorizontalAlignment="Right" Text="-.-- ppm" VerticalAlignment="Center" Width="128" FontSize="20" FontWeight="Bold" TextAlignment="Center" Margin="0,0,32,0"  />
+        <Image x:Name="Ic_Voc" Source="Icon/ic_voc.png" Width="32" Height="32" HorizontalAlignment="Right" Margin="0,8,144,8" Grid.Column="1"  />
+        <TextBlock x:Name="Tb_Voc" HorizontalAlignment="Right" Text="-- ppm" VerticalAlignment="Center" 
+                   Width="112" FontSize="16" FontWeight="Bold" TextAlignment="Center" Margin="0,13,32,13" Foreground="White" Grid.Column="1" />
 
-        <Image x:Name="Ic_S_Dust_PM25" Source="Icon/ic_dust_pm25.png" Width="48" Height="40" HorizontalAlignment="Right" Margin="0,12,360,12"  />
-        <TextBlock x:Name="Tb_S_Dust_PM25" HorizontalAlignment="Right" Text="-- ppm" VerticalAlignment="Center" Width="128" FontSize="20" FontWeight="Bold" TextAlignment="Center" Margin="0,0,224,0"  />
+        <Image x:Name="Ic_S_Dust_PM25" Source="Icon/ic_dust_pm25.png" Width="32" Height="32" HorizontalAlignment="Right" Margin="0,8,312,8" Grid.Column="1"  />
+        <TextBlock x:Name="Tb_S_Dust_PM25" HorizontalAlignment="Right" Text="-- ㎍/㎥" VerticalAlignment="Center" 
+                   Width="112" FontSize="16" FontWeight="Bold" TextAlignment="Center" Margin="0,13,200,13" Foreground="White" Grid.Column="1" />
 
 
-        <Image x:Name="Ic_Clock" Source="Icon/ic_clock.png" Width="48" Height="40" HorizontalAlignment="Center"  VerticalAlignment="Center" Margin="966,0,895,0" />
-        <TextBlock x:Name="Tb_DateTime" Text="HH : MM" FontSize="20" FontWeight="Bold" TextAlignment="Left" Margin="1028,0,554,0" VerticalAlignment="Center"  />
+        <TextBlock x:Name="Tb_DateTime" Text="2020/08/29        17:21" FontSize="16" FontWeight="Bold" Foreground="White"
+                   TextAlignment="Center" Margin="560,13,344,13" VerticalAlignment="Center" Grid.ColumnSpan="2" />
 
     </Grid>
 </UserControl>

@@ -150,11 +150,9 @@
     <Resource Include="Environment\Icon\ic_atmosphere.png" />
     <Resource Include="Environment\Icon\ic_clear_sky.png" />
     <Resource Include="Environment\Icon\ic_clouds.png" />
-    <Resource Include="Environment\Icon\ic_dust_pm10.png" />
     <Resource Include="Environment\Icon\ic_dust_pm25.png" />
     <Resource Include="Environment\Icon\ic_few_clouds.png" />
     <Resource Include="Environment\Icon\ic_humidity.png" />
-    <Resource Include="Environment\Icon\ic_light_rain.png" />
     <Resource Include="Environment\Icon\ic_rain.png" />
     <Resource Include="Environment\Icon\ic_snow.png" />
     <Resource Include="Environment\Icon\ic_thunderstorm.png" />
@@ -162,9 +160,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Res\img_logo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Environment\Icon\ic_clock.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Environment\Icon\ic_temperature.png" />

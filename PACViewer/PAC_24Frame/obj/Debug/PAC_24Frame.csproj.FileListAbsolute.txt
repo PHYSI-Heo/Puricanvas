@@ -88,7 +88,6 @@ C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\bin\Debug\M2Mqtt.Net.dll
 C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\bin\Debug\Newtonsoft.Json.dll
 C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\bin\Debug\M2Mqtt.Net.pdb
 C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\bin\Debug\Newtonsoft.Json.xml
-C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\obj\Debug\PAC_24Frame.csprojAssemblyReference.cache
 C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\obj\Debug\Display\Displayer.g.cs
 C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\obj\Debug\Environment\EnvironmentBar.g.cs
 C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\obj\Debug\MainWindow.g.cs
@@ -110,3 +109,4 @@ C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\obj\Debug\PAC_24Frame.cspr
 C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\obj\Debug\PAC_24Frame.exe
 C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\obj\Debug\PAC_24Frame.pdb
 D:\Projects\2020_Puricanvas\SourceCode\PACViewer\PAC_24Frame\obj\Debug\PAC_24Frame.csprojAssemblyReference.cache
+C:\Users\HEO\Desktop\Puricanvas\PACViewer\PAC_24Frame\obj\Debug\PAC_24Frame.csprojAssemblyReference.cache

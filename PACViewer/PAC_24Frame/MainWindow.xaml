@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterScreen"
         WindowState="Normal"
         WindowStyle="None"
-        Topmost="False"
+        Topmost="True"
         Title="MainWindow" ShowInTaskbar="False" Width="1920" Height="1080" ContentRendered="Window_ContentRendered" ResizeMode="NoResize" >
 
     <Grid x:Name="MainFrame" Width="1920" Height="1080" 
@@ -20,7 +20,7 @@
         </Grid.Background>
 
         <Display:Displayer x:Name="Dp_Image" HorizontalAlignment="Left" VerticalAlignment="Top" Height="1080" Width="1920"/>
-        <Environment:EnvironmentBar x:Name="Eb_Air_State" HorizontalAlignment="Left" Height="64" VerticalAlignment="Bottom" Width="1910" Margin="5,0,0,5"/>
+        <Environment:EnvironmentBar x:Name="Eb_Air_State" HorizontalAlignment="Left" Height="48" VerticalAlignment="Bottom" Width="1910" Margin="5,0,0,5"/>
         <local:ProgressMessage x:Name="Pg_Loading" HorizontalAlignment="Center" Height="56" Width="256" VerticalAlignment="Top" Visibility="Collapsed"/>
 
         <WindowsFormsHost x:Name="Wfh_CCTV" Grid.Column="0" Width="640" Height="360" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3,3,0,0" Visibility="Collapsed">

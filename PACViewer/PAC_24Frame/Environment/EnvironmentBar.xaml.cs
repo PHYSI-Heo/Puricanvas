@@ -37,8 +37,8 @@ namespace PAC_24Frame.Environment
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            Tb_DateTime.Text = DateTime.Now.ToString();
-        }
+            Tb_DateTime.Text = DateTime.Now.ToString("yyyy/MM/dd        HH:mm");
+        } 
 
         public void ShowSensorData(string data)
         {
@@ -92,7 +92,7 @@ namespace PAC_24Frame.Environment
             }
             else if (weatherID >= 500 && weatherID <= 504)
             {
-                iconPath = "Icon/ic_light_rain.png";
+                iconPath = "Icon/ic_rain.png";
                 weatherTxt = "비";
             }
             else if (weatherID >= 511 && weatherID <= 531)
