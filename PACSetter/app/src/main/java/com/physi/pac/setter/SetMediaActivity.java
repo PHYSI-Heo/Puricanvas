@@ -1,5 +1,6 @@
 package com.physi.pac.setter;
 
+import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -54,6 +56,11 @@ public class SetMediaActivity extends HttpRequestActivity implements View.OnClic
     private List<IMGInfo> setupIMGs = new LinkedList<>();
     private List<String> registerIMGs = new LinkedList<>();
     private String deviceId;
+
+    private List<String> fileExtensions = Arrays.asList(
+            ".jpg", ".png", ".JPG", ".PNG",
+            ".mp4", ".avi", ".wmv", ".mov", ".flv"
+            );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,16 +111,22 @@ public class SetMediaActivity extends HttpRequestActivity implements View.OnClic
         super.onHttpResponse(url, resObj);
         try {
             LoadingDialog.dismiss();
-            if(url.equals(HttpPacket.GET_IMGs_URL)){
-                JSONArray rowsObj = resObj.getJSONArray(HttpPacket.PARAMS_ROWS);
-                setDeviceImages(rowsObj);
-            }else if(url.equals(HttpPacket.GET_BASIC_IMGs)){
-                JSONArray rowsObj = resObj.getJSONArray(HttpPacket.PARAMS_ROWS);
-                appendBasicsMediaFile(rowsObj);
-            }else if(url.equals(HttpPacket.UPDATE_IMGs_URL)){
-                pushNotification("IMG");
-                Toast.makeText(getApplicationContext(), "이미지/영상 정보가 갱신되었습니다.", Toast.LENGTH_SHORT).show();
+            switch (url) {
+                case HttpPacket.GET_IMGs_URL: {
+                    JSONArray rowsObj = resObj.getJSONArray(HttpPacket.PARAMS_ROWS);
+                    setDeviceImages(rowsObj);
+                    break;
+                }
+                case HttpPacket.GET_BASIC_IMGs: {
+                    JSONArray rowsObj = resObj.getJSONArray(HttpPacket.PARAMS_ROWS);
+                    appendBasicsMediaFile(rowsObj);
+                    break;
+                }
+                case HttpPacket.UPDATE_IMGs_URL:
+                    pushNotification("IMG");
+                    Toast.makeText(getApplicationContext(), "이미지/영상 정보가 갱신되었습니다.", Toast.LENGTH_SHORT).show();
 //                finish();
+                    break;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -186,7 +199,7 @@ public class SetMediaActivity extends HttpRequestActivity implements View.OnClic
                 }
 
                 @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                public void onResponse(@NotNull Call call, @NotNull Response response) {
                     Log.e(TAG, "file upload successfully.." + response.code());
                     updateIMGProperties();
                 }
@@ -251,8 +264,13 @@ public class SetMediaActivity extends HttpRequestActivity implements View.OnClic
 
     private void appendLocalMediaFiles(List<String> files){
         int existFileCnt = 0;
+        List<String> typeErrorFiles = new LinkedList<>();
         for(String file : files){
             String name = file.substring(file.lastIndexOf('/') + 1);
+            if(!fileExtensions.contains(name.substring(name.lastIndexOf(".")))){
+                typeErrorFiles.add(name);
+                continue;
+            }
             if(checkNonExistFile(name)){
                 setupIMGs.add(new IMGInfo(
                         String.valueOf(setupIMGs.size()),
@@ -263,6 +281,13 @@ public class SetMediaActivity extends HttpRequestActivity implements View.OnClic
             }else{
                 existFileCnt++;
             }
+        }
+
+        if(typeErrorFiles.size() != 0){
+            StringBuilder errMsg = new StringBuilder();
+            for (String errFile : typeErrorFiles)
+                errMsg.append(errFile).append("\n");
+            errMsg.append("지원하지 않는 확장자입니다.");
         }
         if(existFileCnt != 0)
             Toast.makeText(getApplicationContext(),
