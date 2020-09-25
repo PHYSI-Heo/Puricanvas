@@ -11,11 +11,12 @@ namespace PAC_24Frame.Http
         /*
          *      REST API
          */
-        private const string BaseUrl = "http://192.168.219.106:3000";
+        //private const string BaseUrl = "http://192.168.219.106:3000";
         //private const string BaseUrl = "http://192.168.1.12:3000";
-        //private const string BaseUrl = "http://13.124.176.173:3000";
+        private const string BaseUrl = "http://13.124.176.173:3000";
 
         //  Web Server Url
+        public const string Url_Exists_ID = BaseUrl + "/device/exist/code";
         public const string Url_Register_ID = BaseUrl + "/device/register/code";
         public const string Url_Get_Info = BaseUrl + "/device/get/options";
         public const string Url_Get_IMGs = BaseUrl + "/device/get/imgs";

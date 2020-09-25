@@ -65,6 +65,15 @@ namespace PAC_24Frame.Environment
             SetWeatherData(data.GetWeatherID());
         }
 
+        public void InitPublicData()
+        {
+            Tb_Humidity.Text = "-- %";
+            //Tb_P_Dust_PM10.Text = data.GetDustPM10() + " ㎍/㎥"; ;
+            Tb_P_Dust_PM25.Text = "-- ㎍/㎥"; ;
+            Tb_Temperature.Text = "-- ℃"; 
+            Tb_Weather.Text = "--";
+        }
+
         private void SetWeatherData(int weatherID)
         {
             //https://openweathermap.org/weather-conditions

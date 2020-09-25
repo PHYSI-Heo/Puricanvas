@@ -77,7 +77,7 @@ namespace PAC_24Frame
                     Console.WriteLine("(Register) Register result = {0}", obj.ToString());
                     if (resCode.Equals(HTTPPacket.Res_Success))
                     {
-                        SystemEnv.SetProductKey(code);
+                        //SystemEnv.SetProductKey(code);
                         File.WriteAllText(SystemEnv.DEVICE_ID_FILE, code);
                         this.DialogResult = true;
                         this.Close();

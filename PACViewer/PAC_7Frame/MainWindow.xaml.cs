@@ -2,6 +2,7 @@
 using PAC_7Frame.Mqtt;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -28,11 +29,9 @@ namespace PAC_7Frame
             mqttClient = new MQTTClient();
         }
 
-        private void Window_ContentRendered(object sender, EventArgs e)
+        private async void Window_ContentRendered(object sender, EventArgs e)
         {
-            if (!CheckProductCode())
-                return;
-
+            await CheckProductCode();
             SetConfiguration(true, true);
             StartMQTT();
         }
@@ -83,16 +82,13 @@ namespace PAC_7Frame
             Dp_Image.Start(isImageResource);
         }
 
-        private bool CheckProductCode()
+        private async Task CheckProductCode()
         {
-            if (SystemEnv.GetProductKey() == "0")
-            {
-                RegisterKeyDialog registerView = new RegisterKeyDialog();
-                registerView.Owner = this;
-                Nullable<bool> result = registerView.ShowDialog();
-                return result.Value;
-            }
-            return true;
+            string productCode = await new ProductKeyManager().GetProductKey();
+            Console.WriteLine("# Product Code : {0}", productCode);
+            resourceCore.SetProductKey(productCode);
+            mqttClient.SetProductKey(productCode);
         }
+
     }
 }

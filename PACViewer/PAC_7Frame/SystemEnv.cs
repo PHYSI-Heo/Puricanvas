@@ -13,7 +13,7 @@ namespace PAC_7Frame
         /*
        *      Product Info
        */
-        public static string GetProductKey()
+       /* public static string GetProductKey()
         {
             return Properties.Settings.Default.ProductKey;
         }
@@ -22,7 +22,7 @@ namespace PAC_7Frame
         {
             Properties.Settings.Default.ProductKey = key;
             Properties.Settings.Default.Save();
-        }
+        }*/
 
         public const string PRODUCT_TYPE = "7Frame";
 
@@ -52,9 +52,8 @@ namespace PAC_7Frame
         public static string[] IMG_TYPEs = new string[] { ".jpg", ".png", };
 
 
-        private static string applicationPath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
-        public static string CCTV_IP_FILE = applicationPath + @"\LocalCamIP.txt";
-        public static string DEVICE_ID_FILE = applicationPath + @"\ConfigSerailNumber.txt";
+        public static string CCTV_IP_FILE = @"C:\PAC_Resource\\LocalCamIP.txt";
+        public static string DEVICE_ID_FILE = @"C:\PAC_Resource\\ConfigSerailNumber.txt";
 
     }
 }

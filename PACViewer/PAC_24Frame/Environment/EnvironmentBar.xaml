@@ -19,7 +19,7 @@
         </Grid.Background>
 
         <Image RenderOptions.BitmapScalingMode="HighQuality" x:Name="Ic_Weather" Source="Icon/ic_clear_sky.png" Width="32" Height="32" HorizontalAlignment="Left" Margin="40,8,0,8" />
-        <TextBlock x:Name="Tb_Weather" HorizontalAlignment="Left" Text="맑음" Margin="72,13,0,13" VerticalAlignment="Center" 
+        <TextBlock x:Name="Tb_Weather" HorizontalAlignment="Left" Text="--" Margin="72,13,0,13" VerticalAlignment="Center" 
                    Width="72" FontSize="16" FontWeight="Bold" TextAlignment="Center" Foreground="White" />
 
         <Image RenderOptions.BitmapScalingMode="HighQuality" x:Name="Ic_Temperature" Source="Icon/ic_temperature.png" Width="32" Height="32" HorizontalAlignment="Left" Margin="160,8,0,8" />

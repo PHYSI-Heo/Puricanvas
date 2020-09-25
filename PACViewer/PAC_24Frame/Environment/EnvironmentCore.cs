@@ -32,6 +32,14 @@ namespace PAC_24Frame.Environment
             this.longitude = longitude;
         }
 
+        public void InitEnvironmentOptions()
+        {
+            this.cityName = null;
+            this.provinceName = null;
+            this.latitude = null;
+            this.longitude = null;
+        }
+
         public string GetLocation()
         {
             string str = cityName + " " + provinceName;

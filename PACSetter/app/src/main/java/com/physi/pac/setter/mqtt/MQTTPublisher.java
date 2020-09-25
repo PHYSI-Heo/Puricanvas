@@ -23,8 +23,8 @@ public class MQTTPublisher {
 
     private static final String TAG = MQTTPublisher.class.getSimpleName();
 
-    private static final String BROKER_IP = "192.168.1.12";
-//    private static final String BROKER_IP = "13.124.176.173";
+//    private static final String BROKER_IP = "192.168.1.12";
+    private static final String BROKER_IP = "13.124.176.173";
     private static final String BROKER_PORT = "1883";
 
     private static final int CONNECTED = 300;

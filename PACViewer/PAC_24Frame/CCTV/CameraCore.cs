@@ -52,7 +52,8 @@ namespace PAC_24Frame.CCTV
 
         private void Initialize()
         {      
-            CCTV_IP = File.ReadAllText(SystemEnv.CCTV_IP_FILE);
+            if(File.Exists(SystemEnv.CCTV_IP_FILE))
+                CCTV_IP = File.ReadAllText(SystemEnv.CCTV_IP_FILE);
             Console.WriteLine("(CCTV) Local cctv ip address :: {0}", CCTV_IP);
 
             detectResetTimer = new DispatcherTimer();

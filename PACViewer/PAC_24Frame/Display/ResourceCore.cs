@@ -21,6 +21,13 @@ namespace PAC_24Frame.Display
             SystemEnv.InitResourceFolder();
         }
 
+        private string productKey;
+
+        public void SetProductKey(string productKey)
+        {
+            this.productKey = productKey;
+        }
+
         public async Task<DeviceInfo> GetDeviceOptions()
         {
             await Task.Delay(dummyDelay);
@@ -44,7 +51,7 @@ namespace PAC_24Frame.Display
             try
             {
                 JObject paramObj = new JObject();
-                paramObj.Add(HTTPPacket.Param_Device_ID, SystemEnv.GetProductKey());
+                paramObj.Add(HTTPPacket.Param_Device_ID, productKey);
                 JObject obj = await httpClient.Requester(HTTPPacket.Url_Get_Info, "POST", paramObj);
                 if(obj != null)
                 {
@@ -92,7 +99,7 @@ namespace PAC_24Frame.Display
             try
             {
                 JObject paramObj = new JObject();
-                paramObj.Add(HTTPPacket.Param_Device_ID, SystemEnv.GetProductKey());
+                paramObj.Add(HTTPPacket.Param_Device_ID, productKey);
                 JObject obj = await httpClient.Requester(HTTPPacket.Url_Get_IMGs, "POST", paramObj);
                 if (obj != null)
                 {
@@ -140,7 +147,7 @@ namespace PAC_24Frame.Display
                     if (!downlaodFiles.Contains(info.GetFileName()))
                     {
                         string fileUrl = new StringBuilder()
-                          .AppendFormat(@"{0}/{1}/{2}/download", HTTPPacket.Url_IMG_Download, SystemEnv.GetProductKey(), info.GetFileName())
+                          .AppendFormat(@"{0}/{1}/{2}/download", HTTPPacket.Url_IMG_Download, productKey, info.GetFileName())
                           .ToString();
                         string filePath = SystemEnv.DownloadFolderPath + @"/" + info.GetFileName();
                         Console.WriteLine("(Display) Start download file = {0}", fileUrl);

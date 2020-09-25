@@ -16,14 +16,21 @@ namespace PAC_24Frame.Mqtt
 
         private MqttClient mqttClient = null;
 
-        //private const string BROKER_IP = "13.124.176.173";
-        private const string BROKER_IP = "192.168.1.12";
+        private const string BROKER_IP = "13.124.176.173";
+        //private const string BROKER_IP = "192.168.1.12";
+
+        private string productKey;
+
+        public void SetProductKey(string productKey)
+        {
+            this.productKey = productKey;
+        }
 
         public void StartSubscribe()
         {
             if (mqttClient != null && mqttClient.IsConnected)
             {
-                mqttClient.Subscribe(new string[] { SystemEnv.GetProductKey() }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
+                mqttClient.Subscribe(new string[] { productKey }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
             }
         }
 
@@ -36,7 +43,7 @@ namespace PAC_24Frame.Mqtt
                     mqttClient = new MqttClient(BROKER_IP);
                     mqttClient.ConnectionClosed += MqttClient_ConnectionClosed;
                     mqttClient.MqttMsgPublishReceived += MqttClient_MqttMsgPublishReceived;
-                    mqttClient.Connect(SystemEnv.GetProductKey() + SystemEnv.PRODUCT_TYPE);
+                    mqttClient.Connect(productKey + SystemEnv.PRODUCT_TYPE);
                 }
                 catch (MqttConnectionException e)
                 {

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
 
+import com.physi.pac.setter.R;
+
 /**
  * Created by Heo on 2018-02-09.
  */
@@ -29,10 +31,12 @@ public class NotifyDialog {
         new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(message)
+                .setNeutralButton(android.R.string.cancel, null)
                 .setNegativeButton(btnText1, clickListener1)
                 .setPositiveButton(btnText2, clickListener2)
                 .setCancelable(false).create().show();
     }
+
 
     public void show(Context context, int title, int message,
                      String btnText, DialogInterface.OnClickListener clickListener)

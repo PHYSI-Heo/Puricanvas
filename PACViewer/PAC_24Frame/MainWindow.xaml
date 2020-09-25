@@ -8,10 +8,10 @@
         xmlns:Display="clr-namespace:PAC_24Frame.Display" xmlns:Environment="clr-namespace:PAC_24Frame.Environment" x:Class="PAC_24Frame.MainWindow"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        WindowState="Normal"
+        WindowState="Maximized"
         WindowStyle="None"
         Topmost="True"
-        Title="MainWindow" ShowInTaskbar="False" Width="1920" Height="1080" ContentRendered="Window_ContentRendered" ResizeMode="NoResize" >
+        Title="MainWindow" ShowInTaskbar="False" Width="1920" Height="1080" ResizeMode="NoResize" ContentRendered="Window_ContentRendered" >
 
     <Grid x:Name="MainFrame" Width="1920" Height="1080" 
           VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -27,7 +27,7 @@
             <wf:PictureBox x:Name="Pb_CCTV"/>
         </WindowsFormsHost>
         
-        <Button x:Name="Btn_ResetCode" Content="Reset Device ID" HorizontalAlignment="Left" Margin="10,974,0,0" VerticalAlignment="Top" Width="128" Height="32" Click="Btn_ResetCode_Click" Visibility="Hidden"/>
+        <Button x:Name="Btn_ResetCode" Content="Reset Device ID" HorizontalAlignment="Left" Margin="8,8,0,0" VerticalAlignment="Top" Width="128" Height="32" Click="Btn_ResetCode_Click" Visibility="Hidden"/>
 
     </Grid>
 

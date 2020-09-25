@@ -66,7 +66,7 @@ namespace PAC_7Frame
                     {
                         if (Boolean.Parse(obj.GetValue(HTTPPacket.Param_Key_Exist).ToString()))
                         {
-                            SystemEnv.SetProductKey(code);
+                            //SystemEnv.SetProductKey(code);
                             this.DialogResult = true;
                             this.Close();
                         }

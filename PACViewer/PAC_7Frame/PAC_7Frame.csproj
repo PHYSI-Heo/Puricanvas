@@ -75,6 +75,7 @@
     <Compile Include="Http\HTTPClient.cs" />
     <Compile Include="Http\HTTPPacket.cs" />
     <Compile Include="Mqtt\MQTTClient.cs" />
+    <Compile Include="ProductKeyManager.cs" />
     <Compile Include="ProgressMessage.xaml.cs">
       <DependentUpon>ProgressMessage.xaml</DependentUpon>
     </Compile>

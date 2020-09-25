@@ -18,7 +18,7 @@ var dbConfig = {
 const SQL_CD = "CREATE DATABASE " + DBNAME;
 
 // varbinary & varchar
-const SQL_CT_DEVICE = "CREATE TABLE device ( " +
+const SQL_CT_DEVICE = "CREATE TABLE IF NOT EXISTS device ( " +
   "did varchar(20) not null primary key, " +
   "city varchar(20), " +
   "province varchar(20), " +
@@ -26,7 +26,7 @@ const SQL_CT_DEVICE = "CREATE TABLE device ( " +
   "lon varchar(20), " +
   "playtime varchar(10) not null default '5');";
 
-const SQL_CT_IMAGEs = "CREATE TABLE img_resource ( " +
+const SQL_CT_IMAGEs = "CREATE TABLE IF NOT EXISTS img_resource ( " +
   "did varchar(20) not null, " +
   "_order int not null, " +
   "usf char(1) not null default '0', " +

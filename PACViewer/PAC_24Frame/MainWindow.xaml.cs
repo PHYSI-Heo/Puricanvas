@@ -56,17 +56,16 @@ namespace PAC_24Frame
             cctvTimer.Tick += CctvTimer_Tick;
             cctvTimer.Interval = new TimeSpan(0, 0, 10);
         }
-      
-        private void Window_ContentRendered(object sender, EventArgs e)
-        {
-            if (!CheckProductCode())
-                return;
 
+        private async void Window_ContentRendered(object sender, EventArgs e)
+        {
+            await CheckProductCode();
             SetConfiguration(true, true);
             StartMQTT();
             ConnectUartSerial();
             AccessCCTV();
         }
+
         private void CctvTimer_Tick(object sender, EventArgs e)
         {
             cameraCore.SetMode(CameraCore.MODE_ALARM_LISTEN);
@@ -84,7 +83,8 @@ namespace PAC_24Frame
         private void MqttClient_SubscribeListener(string message)
         {
             Dispatcher.Invoke(new Action(delegate {
-                SetConfiguration(message.Equals(SystemEnv.UPDATE_SETTING_INFO), 
+                SetConfiguration(message.Equals(SystemEnv.UPDATE_SETTING_INFO) 
+                    || message.Equals(SystemEnv.UPDATE_SETTING_RESET), 
                     message.Equals(SystemEnv.UPDATE_IMAGE_RESOURCE));
             }), DispatcherPriority.Normal);
         }
@@ -177,6 +177,10 @@ namespace PAC_24Frame
                     Eb_Air_State.ShowPublicData(environmentData);
 
                     weatherRenewTimer.Start();
+                }
+                else
+                {
+                    Eb_Air_State.InitPublicData();
                 }               
             }
 
@@ -184,22 +188,19 @@ namespace PAC_24Frame
             Dp_Image.Start(isImageResource);
         }
 
-        private bool CheckProductCode()
+        private async Task CheckProductCode()
         {
-            if (SystemEnv.GetProductKey() == "0")
-            {
-                RegisterKeyDialog registerView = new RegisterKeyDialog();
-                registerView.Owner = this;
-                Nullable<bool> result = registerView.ShowDialog();
-                return result.Value;
-            }
-            return true;          
+            string productCode = await new ProductKeyManager().GetProductKey();
+            Console.WriteLine("# Product Code : {0}", productCode);
+            resourceCore.SetProductKey(productCode);
+            mqttClient.SetProductKey(productCode);
         }
 
         private void Btn_ResetCode_Click(object sender, RoutedEventArgs e)
         {
-            SystemEnv.SetProductKey("0");
-            File.Delete(SystemEnv.DEVICE_ID_FILE);
+            //SystemEnv.SetProductKey("0");
+            //File.Delete(SystemEnv.DEVICE_ID_FILE);
         }
+
     }
 }
