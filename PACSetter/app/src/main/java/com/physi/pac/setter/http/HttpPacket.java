@@ -3,7 +3,7 @@ package com.physi.pac.setter.http;
 public class HttpPacket {
 
 //    public static final String BASEURL = "http://192.168.1.12:3000";
-    public static final String BASEURL = "http://13.124.176.173:3000";
+    public static final String BASEURL = "http://54.180.153.12:3000";
 
     /*
          API

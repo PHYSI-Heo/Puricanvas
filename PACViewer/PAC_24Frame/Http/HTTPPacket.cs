@@ -13,7 +13,7 @@ namespace PAC_24Frame.Http
          */
         //private const string BaseUrl = "http://192.168.219.106:3000";
         //private const string BaseUrl = "http://192.168.1.12:3000";
-        private const string BaseUrl = "http://13.124.176.173:3000";
+        private const string BaseUrl = "http://54.180.153.12:3000";
 
         //  Web Server Url
         public const string Url_Exists_ID = BaseUrl + "/device/exist/code";

@@ -12,7 +12,7 @@ namespace PAC_7Frame.Http
          *      REST API
          */
         //private const string BaseUrl = "http://192.168.1.12:3000";
-        private const string BaseUrl = "http://13.124.176.173:3000";
+        private const string BaseUrl = "http://54.180.153.12:3000";
 
         //  Web Server Url
         public const string Url_Exist_ID = BaseUrl + "/device/exist/code";
